@@ -1,0 +1,1228 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>권혜영 워크스페이스</title>
+<link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css" />
+<style>
+  :root{
+    --bg:#F5F6F8; --surface:#FFFFFF;
+    --navy:#131A2B; --navy-2:#1D2740;
+    --ink:#191F28; --muted:#6B7684; --faint:#9AA3B2; --line:#E5E8EB;
+    --orange:#FC9600; --orange-tint:#FFF1DD; --orange-deep:#D67D00;
+    --teal:#0EA5A5; --teal-tint:#E4F7F7;
+    --radius:14px;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{font-family:'Pretendard', -apple-system, sans-serif; background:var(--bg); color:var(--ink); line-height:1.55; -webkit-font-smoothing:antialiased; padding-bottom:60px;}
+  .wrap{max-width:1600px; margin:0 auto; padding:0 40px;}
+
+  .hero{background:linear-gradient(180deg, var(--navy) 0%, var(--navy-2) 100%); color:#fff; padding:40px 0 30px;}
+  .eyebrow{font-size:12px; font-weight:600; letter-spacing:.14em; text-transform:uppercase; color:var(--orange); margin-bottom:10px;}
+  .hero h1{font-size:24px; font-weight:800; letter-spacing:-0.02em;}
+  .os-tag{margin-top:6px; font-size:12px; font-weight:600; color:var(--orange);}
+  .hero p.sub{margin-top:8px; font-size:13.5px; color:rgba(255,255,255,.6); max-width:480px;}
+
+  .goal-badge{
+    margin-top:18px; display:inline-flex; align-items:center; gap:10px;
+    background:rgba(252,150,0,.1); border:1px solid rgba(252,150,0,.35); border-radius:12px;
+    padding:12px 16px;
+  }
+  .goal-badge .g-label{font-size:10px; font-weight:800; letter-spacing:.1em; color:var(--orange); flex:none;}
+  .goal-badge .g-text{font-size:13.5px; font-weight:700; color:#fff; line-height:1.5;}
+  .goal-badge .g-text .strike{color:rgba(255,255,255,.4); font-weight:500; text-decoration:line-through; margin-right:5px;}
+
+  .stat-row{display:flex; gap:10px; margin-top:24px; flex-wrap:wrap;}
+  .stat{background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.1); border-radius:12px; padding:12px 16px; flex:1; min-width:120px;}
+  .stat .v{font-size:20px; font-weight:800;}
+  .stat .v span{font-size:12px; font-weight:600; color:rgba(255,255,255,.5);}
+  .stat .l{font-size:11px; color:rgba(255,255,255,.5); margin-top:2px;}
+  .stat .v.pos{color:var(--orange);}
+
+  /* ---------- workspace layout (sidebar + panel) ---------- */
+  .workspace{display:flex; gap:22px; align-items:flex-start; padding-top:28px;}
+  .sidebar{width:236px; flex:none; display:flex; flex-direction:column; gap:5px; position:sticky; top:16px;}
+  .sidebar-label{font-size:10.5px; font-weight:800; color:var(--faint); letter-spacing:.08em; text-transform:uppercase; margin:4px 0 4px 4px;}
+  .side-item{
+    display:flex; align-items:center; gap:9px; padding:10px 11px; border-radius:10px; cursor:pointer;
+    border:1px solid transparent; background:transparent;
+  }
+  .side-item:hover{background:#EEF0F3;}
+  .side-item.active{border-color:currentColor;}
+  .side-icon{font-size:15px; flex:none; width:18px; text-align:center;}
+  .side-label{flex:1; font-size:13px; font-weight:700; color:var(--ink); min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+  .side-count{font-size:11px; font-weight:700; color:var(--muted); background:#fff; border-radius:20px; padding:2px 8px; flex:none;}
+  .side-divider{height:1px; background:var(--line); margin:10px 6px;}
+
+  .panel{flex:1; min-width:0;}
+  .panel-header{margin-bottom:16px;}
+  .panel-breadcrumb{font-size:11px; font-weight:700; color:var(--faint); margin-bottom:6px;}
+  .panel-title{display:flex; align-items:center; gap:9px; font-size:19px; font-weight:800; letter-spacing:-0.01em;}
+  .panel-desc{font-size:12.5px; color:var(--muted); margin-top:7px; max-width:600px;}
+  .panel-meta{font-size:11.5px; color:var(--faint); margin-top:9px;}
+
+  .quick-add-bar{
+    border:1.5px dashed var(--line); border-radius:10px; padding:13px 14px; margin-bottom:8px; background:var(--surface);
+    display:flex; align-items:center; gap:8px;
+  }
+  .quick-add-bar input{border:none; background:transparent; font-size:13.5px; width:100%; font-family:inherit; color:var(--ink);}
+  .quick-add-bar input:focus{outline:none;}
+  .quick-add-bar input::placeholder{color:var(--faint); font-weight:600;}
+  .quick-add-btn{
+    flex:none; background:var(--navy); color:#fff; border:none; border-radius:7px; padding:7px 14px;
+    font-size:12px; font-weight:700; cursor:pointer; font-family:inherit;
+  }
+  .quick-add-btn:disabled{background:var(--faint); cursor:default;}
+
+  .phase-pills{display:flex; gap:6px; margin-bottom:8px;}
+  .phase-pill{
+    font-size:12px; font-weight:700; padding:7px 14px; border-radius:20px; cursor:pointer;
+    border:1px solid var(--line); background:var(--bg); color:var(--muted);
+  }
+  .phase-pill.active[data-phase="study"]{background:#EAF1FF; border-color:#2F6FED; color:#2F6FED;}
+  .phase-pill.active[data-phase="ops"]{background:var(--orange-tint); border-color:var(--orange); color:var(--orange-deep);}
+
+  .phase-filter{display:flex; gap:6px; margin-bottom:14px; flex-wrap:wrap;}
+  .phase-filter-pill{
+    font-size:12px; font-weight:700; padding:7px 13px; border-radius:20px; cursor:pointer;
+    border:1px solid var(--line); background:var(--surface); color:var(--muted);
+  }
+  .phase-filter-pill.active{background:var(--navy); border-color:var(--navy); color:#fff;}
+
+  .entry-phase-tag{font-size:10px; font-weight:700; padding:2px 8px; border-radius:20px;}
+  .entry-phase-tag.study{background:#EAF1FF; color:#2F6FED;}
+  .entry-phase-tag.ops{background:var(--orange-tint); color:var(--orange-deep);}
+
+  /* AI chat */
+  .chat-box{background:var(--surface); border:1px solid var(--line); border-radius:var(--radius); display:flex; flex-direction:column; height:calc(100vh - 260px); min-height:520px; flex:1; min-width:0;}
+  .chat-messages{flex:1; overflow-y:auto; padding:18px; display:flex; flex-direction:column; gap:12px;}
+  .chat-msg{max-width:80%; padding:10px 13px; border-radius:12px; font-size:13px; line-height:1.55; white-space:pre-wrap;}
+  .chat-msg.user{align-self:flex-end; background:var(--navy); color:#fff; border-bottom-right-radius:3px;}
+  .chat-msg.assistant{align-self:flex-start; background:var(--bg); color:var(--ink); border-bottom-left-radius:3px;}
+  .chat-msg.system-note{align-self:center; font-size:11.5px; color:var(--faint); background:none; max-width:100%; text-align:center;}
+  .chat-empty{margin:auto; text-align:center; color:var(--faint); font-size:13px; padding:0 30px;}
+  .chat-loading{align-self:flex-start; color:var(--faint); font-size:12.5px; padding:6px 4px;}
+  .chat-input-row{display:flex; gap:8px; padding:14px; border-top:1px solid var(--line);}
+  .chat-input-row textarea{
+    flex:1; font-family:inherit; font-size:13px; border:1px solid var(--line); border-radius:8px;
+    padding:9px 12px; resize:none; background:var(--bg); color:var(--ink);
+  }
+  .chat-input-row textarea:focus{outline:none; border-color:var(--orange);}
+  .chat-send-btn{
+    flex:none; background:var(--navy); color:#fff; border:none; border-radius:8px; padding:0 18px;
+    font-size:12.5px; font-weight:700; cursor:pointer; font-family:inherit;
+  }
+  .chat-send-btn:disabled{background:var(--faint); cursor:default;}
+  .chat-clear-btn{font-size:11px; color:var(--faint); text-decoration:underline; cursor:pointer; background:none; border:none; font-family:inherit;}
+
+  .chat-layout{display:flex; gap:14px; align-items:flex-start;}
+  .thread-list{width:190px; flex:none; display:flex; flex-direction:column; gap:8px;}
+  .thread-new-btn{
+    background:var(--navy); color:#fff; border:none; border-radius:8px; padding:9px 10px;
+    font-size:12px; font-weight:700; cursor:pointer; font-family:inherit;
+  }
+  .thread-scroll{display:flex; flex-direction:column; gap:4px; max-height:calc(100vh - 320px); overflow-y:auto;}
+  .thread-item{
+    display:flex; align-items:center; justify-content:space-between; gap:6px; padding:9px 10px;
+    border-radius:8px; cursor:pointer; border:1px solid transparent;
+  }
+  .thread-item:hover{background:#EEF0F3;}
+  .thread-item.active{background:#F1EDFF; border-color:#7C5CFC;}
+  .thread-title{font-size:12px; font-weight:600; color:var(--ink); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; flex:1; min-width:0;}
+  .thread-item.active .thread-title{color:#7C5CFC; font-weight:700;}
+  .thread-del{flex:none; background:none; border:none; color:var(--faint); font-size:13px; cursor:pointer; opacity:0;}
+  .thread-item:hover .thread-del{opacity:1;}
+  .thread-empty{font-size:11.5px; color:var(--faint); padding:8px 4px;}
+
+  @media (max-width:600px){
+    .chat-layout{flex-direction:column;}
+    .thread-list{width:100%;}
+    .thread-scroll{flex-direction:row; max-height:none; overflow-x:auto; overflow-y:visible;}
+    .thread-item{flex:none;}
+  }
+
+  .record-list{margin-top:6px;}
+  .empty-state{text-align:center; padding:40px 10px; color:var(--faint); font-size:13px;}
+
+  /* ---------- shared card/composer bits ---------- */
+  .composer{background:var(--surface); border:1px solid var(--line); border-radius:var(--radius); padding:20px; margin-bottom:14px;}
+  .composer input[type="text"], .composer textarea{
+    width:100%; font-family:inherit; font-size:13.5px; border:1px solid var(--line); border-radius:8px;
+    padding:10px 12px; color:var(--ink); background:var(--bg); resize:vertical; margin-bottom:8px;
+  }
+  .composer input:focus, .composer textarea:focus{outline:none; border-color:var(--orange);}
+  .composer input[type="text"].metric-input{border-color:var(--orange); background:var(--orange-tint);}
+  .composer-submit{
+    background:var(--navy); color:#fff; border:none; border-radius:8px; padding:9px 18px;
+    font-size:12.5px; font-weight:700; cursor:pointer; font-family:inherit; float:right;
+  }
+  .composer::after{content:''; display:table; clear:both;}
+
+  .checkin-grid{display:grid; grid-template-columns:1fr 1fr; gap:10px 16px; margin-bottom:10px;}
+  @media (max-width:520px){.checkin-grid{grid-template-columns:1fr;}}
+  .checkin-item .ci-label{display:flex; justify-content:space-between; font-size:12px; margin-bottom:4px;}
+  .checkin-item .ci-label b{font-weight:700; display:inline-flex; align-items:center; gap:6px;}
+  .checkin-item .ci-label span{font-weight:700;}
+  .checkin-item input[type="range"]{width:100%;}
+  .ci-dot{width:7px; height:7px; border-radius:50%; flex:none;}
+
+  /* outcome (decision -> result) */
+  .outcome-toggle{
+    margin-top:8px; font-size:11.5px; font-weight:700; color:var(--muted); background:var(--bg);
+    border:1px dashed var(--line); border-radius:8px; padding:7px 12px; cursor:pointer;
+  }
+  .outcome-form{margin-top:10px; padding-top:10px; border-top:1px dashed var(--line);}
+  .outcome-result-row{display:flex; gap:6px; margin-bottom:8px;}
+  .outcome-result-row select{
+    font-family:inherit; font-size:12px; border:1px solid var(--line); border-radius:8px;
+    padding:6px 10px; background:var(--surface); color:var(--ink);
+  }
+  .outcome-input{width:100%; font-family:inherit; font-size:12.5px; border:1px solid var(--line); border-radius:8px; padding:8px 10px; margin-bottom:8px; resize:vertical; background:var(--bg);}
+  .outcome-save{background:var(--navy); color:#fff; border:none; border-radius:7px; padding:6px 14px; font-size:11.5px; font-weight:700; cursor:pointer; font-family:inherit;}
+  .outcome-cancel{background:none; border:none; color:var(--faint); font-size:11.5px; cursor:pointer; font-family:inherit; margin-left:6px;}
+  .outcome-block{margin-top:10px; padding:10px 12px; border-radius:8px;}
+  .outcome-block.positive{background:#EAF7EF;}
+  .outcome-block.neutral{background:#F2F3F5;}
+  .outcome-block.negative{background:#FDECEC;}
+  .outcome-tag{font-size:10px; font-weight:800; letter-spacing:.02em;}
+  .outcome-block.positive .outcome-tag{color:#1B8A4A;}
+  .outcome-block.neutral .outcome-tag{color:var(--muted);}
+  .outcome-block.negative .outcome-tag{color:#C22C31;}
+  .outcome-date{font-size:10.5px; color:var(--faint); margin-left:8px;}
+  .outcome-text{font-size:12.5px; color:var(--ink); margin-top:4px; white-space:pre-wrap;}
+
+  .entry-metric{
+    display:inline-block; margin-top:6px; font-size:11.5px; font-weight:700; color:var(--orange-deep);
+    background:var(--orange-tint); border-radius:6px; padding:4px 10px;
+  }
+
+  /* attachments */
+  .attach-input-btn{
+    display:inline-flex; align-items:center; gap:6px; font-size:11.5px; font-weight:700; color:var(--muted);
+    background:var(--bg); border:1px dashed var(--line); border-radius:8px; padding:7px 12px; cursor:pointer; margin-bottom:8px;
+  }
+  .attach-input-btn:hover{border-color:var(--orange); color:var(--orange-deep);}
+  .attach-staged{display:flex; gap:6px; flex-wrap:wrap; margin-bottom:8px;}
+  .attach-staged-chip{
+    display:inline-flex; align-items:center; gap:6px; font-size:11px; background:var(--orange-tint); color:var(--orange-deep);
+    border-radius:20px; padding:4px 8px 4px 10px;
+  }
+  .attach-staged-chip .rm{cursor:pointer; font-weight:800; opacity:.7;}
+  .attach-progress{font-size:11.5px; color:var(--faint); margin-bottom:8px;}
+
+  .entry-attachments{display:flex; flex-wrap:wrap; gap:8px; margin-top:10px;}
+  .attach-thumb{width:64px; height:64px; border-radius:8px; object-fit:cover; border:1px solid var(--line); cursor:pointer;}
+  .attach-file-chip{
+    display:flex; align-items:center; gap:8px; font-size:11.5px; background:var(--bg); border:1px solid var(--line);
+    border-radius:8px; padding:8px 10px; max-width:220px;
+  }
+  .attach-file-chip .af-icon{font-size:16px; flex:none;}
+  .attach-file-chip .af-name{flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font-weight:600; color:var(--ink);}
+  .attach-file-chip .af-size{font-size:10px; color:var(--faint);}
+  .attach-file-chip .af-dl{color:var(--orange-deep); font-weight:800; cursor:pointer; flex:none;}
+  .attach-del{position:relative; margin-left:-6px;}
+  .attach-del-btn{
+    position:absolute; top:-6px; right:-6px; width:16px; height:16px; border-radius:50%; background:var(--navy);
+    color:#fff; font-size:10px; display:flex; align-items:center; justify-content:center; cursor:pointer; border:none;
+  }
+  .entry-attach-add{margin-top:8px; font-size:11px; font-weight:700; color:var(--faint); background:none; border:1px dashed var(--line); border-radius:7px; padding:5px 10px; cursor:pointer; font-family:inherit;}
+
+  .entry{background:var(--surface); border:1px solid var(--line); border-left:4px solid var(--faint); border-radius:10px; padding:16px 18px; margin-bottom:10px; position:relative;}
+  .entry-top{display:flex; justify-content:space-between; align-items:flex-start; gap:10px; margin-bottom:4px;}
+  .entry-meta{display:flex; align-items:center; gap:8px; flex-wrap:wrap;}
+  .entry-tag{font-size:10px; font-weight:800; letter-spacing:.03em; padding:2px 8px; border-radius:20px;}
+  .entry-tag.journal, .entry-tag.milestone, .entry-tag.decision{background:#EEF0F3; color:var(--muted);}
+  .entry-tag.checkin{background:var(--teal-tint); color:var(--teal);}
+  .entry-example-tag{font-size:10px; font-weight:700; padding:2px 8px; border-radius:20px; background:#EEF0F3; color:var(--faint);}
+  .entry-dom-tag{font-size:10px; font-weight:700; padding:2px 8px; border-radius:20px; background:#fff;}
+  .entry-date{font-size:11px; color:var(--faint); font-weight:600;}
+  .entry-del{background:none; border:none; color:var(--faint); font-size:16px; cursor:pointer; line-height:1;}
+  .entry-edit{background:none; border:none; color:var(--faint); font-size:13px; cursor:pointer; margin-right:8px;}
+  .entry-edit:hover{color:var(--orange-deep);}
+  .edit-title-input{
+    width:100%; font-family:inherit; font-size:14px; font-weight:700; border:1px solid var(--orange); border-radius:8px;
+    padding:8px 10px; color:var(--ink); background:var(--orange-tint); margin-bottom:6px;
+  }
+  .edit-content-input{
+    width:100%; font-family:inherit; font-size:12.8px; border:1px solid var(--line); border-radius:8px;
+    padding:8px 10px; color:var(--ink); background:var(--bg); resize:vertical; margin-bottom:6px;
+  }
+  .edit-title-input:focus, .edit-content-input:focus{outline:none; border-color:var(--orange);}
+  .edit-save{background:var(--navy); color:#fff; border:none; border-radius:7px; padding:6px 14px; font-size:11.5px; font-weight:700; cursor:pointer; font-family:inherit;}
+  .edit-cancel{background:none; border:none; color:var(--faint); font-size:11.5px; cursor:pointer; font-family:inherit; margin-left:6px;}
+  .entry-title{font-size:14px; font-weight:700; margin-bottom:4px;}
+  .entry-content{font-size:12.8px; color:var(--muted); white-space:pre-wrap;}
+  .entry-scores{display:flex; gap:10px; flex-wrap:wrap; margin-top:6px;}
+  .es{font-size:11px; color:var(--muted); background:var(--bg); border-radius:6px; padding:4px 8px;}
+  .es b{color:var(--ink);}
+
+  /* growth chart / snapshot (checkin view) */
+  .chart-card{background:var(--surface); border:1px solid var(--line); border-radius:var(--radius); padding:20px; margin-bottom:14px;}
+  .chart-empty{text-align:center; padding:26px 10px; color:var(--faint); font-size:13px;}
+  .chart-empty b{color:var(--muted); display:block; margin-bottom:4px; font-size:13.5px;}
+  #chart-svg{width:100%; height:auto; display:block;}
+  .chart-legend{display:flex; gap:14px; margin-top:10px; padding-top:10px; border-top:1px solid var(--line); font-size:11px; color:var(--muted); flex-wrap:wrap;}
+  .chart-legend span{display:inline-flex; align-items:center; gap:5px;}
+  .leg-dot{width:7px; height:7px; border-radius:50%;}
+
+  .snap-row{margin-bottom:12px;}
+  .snap-row:last-child{margin-bottom:0;}
+  .snap-top{display:flex; justify-content:space-between; font-size:12.5px; margin-bottom:5px;}
+  .snap-top b{font-weight:700;}
+  .snap-track{height:7px; background:#EEF0F3; border-radius:4px; overflow:hidden;}
+  .snap-fill{height:100%; border-radius:4px;}
+  .snap-row.weak{background:#FDECEC; margin:0 -12px 12px; padding:8px 12px; border-radius:8px;}
+  .weak-tag{font-size:10px; font-weight:800; color:#C22C31; background:#fff; border-radius:20px; padding:1px 7px; margin-left:6px;}
+
+  @media (max-width:760px){
+    .workspace{flex-direction:column;}
+    .sidebar{width:100%; position:static; flex-direction:row; flex-wrap:wrap;}
+    .side-item{flex:none;}
+    .side-divider{display:none;}
+  }
+
+  footer{max-width:1600px; margin:30px auto 0; padding:18px 40px 0; border-top:1px solid var(--line); font-size:11px; color:var(--faint); display:flex; justify-content:space-between; flex-wrap:wrap; gap:8px;}
+  #reset-all{background:none; border:none; color:var(--faint); font-size:11px; text-decoration:underline; cursor:pointer; font-family:inherit;}
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="wrap">
+    <div class="eyebrow">Career Journey Log</div>
+    <h1>권혜영 워크스페이스</h1>
+    <p class="os-tag">경영자가 되기 위한 개인 운영체계(OS)</p>
+    <p class="sub">브랜드팀장에서 경영자로 — 공부·역량확장·운영여정을 기록하고, 성장을 데이터화한다.</p>
+    <div class="goal-badge">
+      <span class="g-label">GOAL</span>
+      <span class="g-text"><span class="strike">브랜드를 만드는 사람</span>을 넘어, 브랜드를 지속적으로 성장시키는 경영자</span>
+    </div>
+    <div class="stat-row">
+      <div class="stat"><div class="v" id="stat-total">0</div><div class="l">총 기록</div></div>
+      <div class="stat"><div class="v" id="stat-days">0<span>일</span></div><div class="l">기록 시작 후</div></div>
+      <div class="stat"><div class="v" id="stat-checkins">0</div><div class="l">역량 체크인 횟수</div></div>
+      <div class="stat"><div class="v pos" id="stat-growth">–</div><div class="l">첫 체크인 대비 성장</div></div>
+    </div>
+  </div>
+</div>
+
+<div class="wrap">
+  <div class="workspace">
+    <aside class="sidebar" id="sidebar"></aside>
+    <main class="panel" id="panel"></main>
+  </div>
+</div>
+
+<footer>
+  <span>권혜영 워크스페이스 · 개인 저장 · 나만 볼 수 있음</span>
+  <span>
+    <button id="load-example" style="background:none; border:none; color:var(--orange-deep); font-size:11px; text-decoration:underline; cursor:pointer; font-family:inherit; margin-right:14px;">예시로 채워보기</button>
+    <button id="clear-example" style="background:none; border:none; color:var(--faint); font-size:11px; text-decoration:underline; cursor:pointer; font-family:inherit; margin-right:14px;">예시만 지우기</button>
+    <button id="reset-all">전체 초기화</button>
+  </span>
+</footer>
+
+<script>
+/* ===================== DATA ===================== */
+const CATEGORIES = [
+  {id:'fin', label:'재무적 사고력', short:'재무', color:'#2F6FED', tint:'#EAF1FF', desc:'손익·현금흐름·원가구조 — 이게 돈이 되는가'},
+  {id:'strategic', label:'전략적 판단력', short:'전략', color:'#FC9600', tint:'#FFF1DD', desc:'무엇에 집중하고 무엇을 버릴지'},
+  {id:'org', label:'조직 설계력', short:'조직', color:'#7C5CFC', tint:'#F1EDFF', desc:'본인 없이도 돌아가는 시스템'},
+  {id:'decision', label:'불확실성 하 의사결정력', short:'결정', color:'#E5484D', tint:'#FDECEC', desc:'정답 없는 문제를 풀고 책임지는 능력'},
+  {id:'comm', label:'커뮤니케이션·영향력', short:'영향력', color:'#0EA5A5', tint:'#E4F7F7', desc:'서로 다른 언어를 하나의 방향으로'},
+  {id:'risk', label:'리스크 관리 감각', short:'리스크', color:'#B45309', tint:'#FBF1E6', desc:'감수할 리스크와 피할 리스크를 구분'},
+];
+const CAT_MAP = Object.fromEntries(CATEGORIES.map(c=>[c.id,c]));
+const TYPE_LABEL = {journal:'기록', milestone:'기록', decision:'기록', checkin:'역량 체크인'};
+
+const DOMAINS = [
+  {id:'brand_mkt', label:'브랜드 전략 및 마케팅', short:'브랜드·마케팅', icon:'🎯', color:'#FC9600', desc:'카테고리 설계, 포지셔닝, 메시징, 퍼포먼스, 콘텐츠, CRM, 그로스'},
+  {id:'finance', label:'재무회계', short:'재무회계', icon:'💰', color:'#2F6FED', desc:'예산, 손익, 현금흐름, 투자 의사결정 — 숫자로 사업의 건강 상태를 읽는 능력'},
+  {id:'org', label:'조직운영', short:'조직운영', icon:'🧩', color:'#7C5CFC', desc:'채용, OKR, SOP, 프로젝트 관리 — 본인 없이도 돌아가는 시스템을 만드는 능력'},
+  {id:'strategic', label:'전략적 판단력', short:'전략적 판단력', icon:'🧭', color:'#D6336C', desc:'무엇에 집중하고 무엇을 버릴지 결정하는 능력'},
+  {id:'ai', label:'AI경영', short:'AI경영', icon:'🤖', color:'#131A2B', desc:'AI 에이전트, 자동화, 데이터 기반 의사결정'},
+  {id:'comm', label:'커뮤니케이션·영향력', short:'커뮤니케이션', icon:'🗣️', color:'#0EA5A5', desc:'이해관계자를 하나의 방향으로 설득하는 능력'},
+  {id:'risk', label:'리스크 관리', short:'리스크 관리', icon:'⚠️', color:'#B45309', desc:'감수할 리스크와 피할 리스크를 구분하는 감각'},
+];
+const DOM_MAP = Object.fromEntries(DOMAINS.map(d=>[d.id,d]));
+
+const EXAMPLE_ENTRIES = [
+  {id:1001, date:'2026.01.13', ts:new Date('2026-01-13').getTime(), type:'journal', title:'오늘 처음으로 숫자가 다르게 보였다',
+   content:'회의에서 대표가 원가율 얘기를 하는데, 예전엔 흘려들었을 텐데 오늘은 그게 무슨 뜻인지 계산이 됐다. 관리회계 공부 효과가 처음으로 실감났다.',
+   domain:'finance', phase:'study', isExample:true},
+  {id:1002, date:'2026.02.03', ts:new Date('2026-02-03').getTime(), type:'milestone', title:'POUR솔루션 공헌이익률 첫 계산 완료',
+   content:'계약금액, 원가, 광고비, 영업비를 직접 분해해서 공헌이익률을 처음 계산해봤다. 기존엔 매출만 봤는데 이제 뭐가 남는 장사인지 구분이 된다.',
+   domain:'finance', metric:'공헌이익률 34% 확인', phase:'ops', isExample:true},
+  {id:1003, date:'2026.02.20', ts:new Date('2026-02-20').getTime(), type:'decision', title:'아파트스퀘어 광고 예산 20% 축소 결정',
+   content:'문의 수는 꾸준한데 계약전환율이 3개월째 떨어지고 있음. 조회수보다 전환에 문제가 있다고 판단해서, 광고비를 줄이고 랜딩페이지·영업 프로세스 개선에 그 예산을 돌리기로 함.',
+   domain:'strategic', phase:'ops',
+   outcome:{date:'2026.05.15', text:'예산을 줄였는데도 계약 수는 유지됐고, 절감한 예산을 랜딩페이지 개선에 써서 전환율이 오히려 1.4%p 올랐다.', result:'positive'},
+   isExample:true},
+  {id:1004, date:'2026.03.01', ts:new Date('2026-03-01').getTime(), type:'checkin', title:'1분기 첫 자가진단',
+   content:'회계 공부는 시작했지만 아직 실전 판단 경험이 부족하다고 느낌. 조직 위임은 팀장으로서 어느 정도 하고 있어서 상대적으로 높게 줬다.',
+   scores:{fin:2, strategic:3, org:3, decision:2, comm:3, risk:2}, isExample:true},
+  {id:1005, date:'2026.03.18', ts:new Date('2026-03-18').getTime(), type:'journal', title:'AI 자동화로 리포트 시간을 줄였다',
+   content:'매주 반복하던 KPI 취합 작업을 자동화 스크립트로 돌려봤다. 처음엔 어색했는데, 이게 조직을 설계하는 것과 비슷한 감각이라는 걸 느꼈다.',
+   domain:'ai', phase:'ops', isExample:true},
+];
+
+/* ===================== STATE ===================== */
+let entries = [];
+let currentView = 'all'; // 'all' | domain id | 'checkin'
+let phaseFilter = 'all'; // 'all' | 'study' | 'ops'
+let selectedPhase = 'study'; // for composer: 'study' | 'ops'
+let chatThreads = []; // {id, title, messages:[{role,content}], updatedAt}
+let activeThreadId = null;
+let chatLoading = false;
+let outcomeEditing = new Set();
+let editingEntries = new Set();
+let stagedFiles = [];
+let attachmentCache = {};
+
+const MAX_FILE_BYTES = 4 * 1024 * 1024;
+const MAX_IMAGE_DIM = 1400;
+
+/* ===================== STORAGE ===================== */
+async function loadEntries(){
+  try{
+    const res = await window.storage.get('hyeyoung-journey-entries');
+    if(res && res.value) entries = JSON.parse(res.value);
+  }catch(e){ entries = []; }
+}
+async function saveEntries(){
+  try{ await window.storage.set('hyeyoung-journey-entries', JSON.stringify(entries)); }
+  catch(e){ console.error('save failed', e); }
+}
+async function loadAttachmentCache(){
+  try{
+    const list = await window.storage.list('hyeyoung-file-');
+    if(list && list.keys){
+      for(const k of list.keys){
+        try{ const r = await window.storage.get(k, false); if(r) attachmentCache[k] = r.value; }catch(e){}
+      }
+    }
+  }catch(e){}
+}
+async function loadChatHistory(){
+  try{
+    const res = await window.storage.get('hyeyoung-ai-chat-threads');
+    if(res && res.value) chatThreads = JSON.parse(res.value);
+  }catch(e){ chatThreads = []; }
+  // 이전 버전(단일 대화) 데이터가 있으면 첫 스레드로 옮겨온다
+  if(chatThreads.length === 0){
+    try{
+      const old = await window.storage.get('hyeyoung-ai-chat-history');
+      if(old && old.value){
+        const oldMsgs = JSON.parse(old.value);
+        if(oldMsgs.length){
+          chatThreads.push({id:Date.now(), title: threadTitleFrom(oldMsgs), messages: oldMsgs, updatedAt: Date.now()});
+          await saveChatHistory();
+        }
+      }
+    }catch(e){}
+  }
+  if(chatThreads.length) activeThreadId = chatThreads[chatThreads.length-1].id;
+}
+async function saveChatHistory(){
+  try{ await window.storage.set('hyeyoung-ai-chat-threads', JSON.stringify(chatThreads)); }
+  catch(e){ console.error('save failed', e); }
+}
+function threadTitleFrom(messages){
+  const firstUser = messages.find(m=>m.role==='user');
+  if(!firstUser) return '새 대화';
+  return firstUser.content.length > 22 ? firstUser.content.slice(0,22)+'…' : firstUser.content;
+}
+function getActiveThread(){
+  return chatThreads.find(t=>t.id===activeThreadId) || null;
+}
+function createNewThread(){
+  const t = {id:Date.now(), title:'새 대화', messages:[], updatedAt:Date.now()};
+  chatThreads.push(t);
+  activeThreadId = t.id;
+  return t;
+}
+
+/* ===================== UTIL ===================== */
+function todayStr(){
+  const d = new Date();
+  return `${d.getFullYear()}.${String(d.getMonth()+1).padStart(2,'0')}.${String(d.getDate()).padStart(2,'0')}`;
+}
+function formatSize(bytes){
+  if(bytes < 1024) return bytes + 'B';
+  if(bytes < 1024*1024) return (bytes/1024).toFixed(0) + 'KB';
+  return (bytes/1024/1024).toFixed(1) + 'MB';
+}
+function escapeHtml(s){
+  const d = document.createElement('div');
+  d.textContent = s;
+  return d.innerHTML;
+}
+function escapeHtmlAttr(s){
+  return String(s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/'/g,'&#39;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+function avgScore(scores){
+  const vals = CATEGORIES.map(c=>scores[c.id]).filter(v=>typeof v === 'number');
+  return vals.reduce((a,b)=>a+b,0)/vals.length;
+}
+function triggerDownload(dataUrl, filename){
+  const a = document.createElement('a');
+  a.href = dataUrl; a.download = filename;
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+}
+function readFileAsDataURL(file){
+  return new Promise((resolve, reject)=>{
+    const r = new FileReader();
+    r.onload = () => resolve(r.result);
+    r.onerror = () => reject(new Error('read failed'));
+    r.readAsDataURL(file);
+  });
+}
+async function compressImageIfNeeded(file, dataUrl){
+  if(!file.type.startsWith('image/')) return dataUrl;
+  return new Promise((resolve)=>{
+    const img = new Image();
+    img.onload = () => {
+      let {width, height} = img;
+      if(width <= MAX_IMAGE_DIM && height <= MAX_IMAGE_DIM && file.size < 1.5*1024*1024){ resolve(dataUrl); return; }
+      const scale = Math.min(1, MAX_IMAGE_DIM / Math.max(width, height));
+      const canvas = document.createElement('canvas');
+      canvas.width = Math.round(width*scale); canvas.height = Math.round(height*scale);
+      canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
+      resolve(canvas.toDataURL('image/jpeg', 0.82));
+    };
+    img.onerror = () => resolve(dataUrl);
+    img.src = dataUrl;
+  });
+}
+
+/* ===================== SIDEBAR ===================== */
+function selectView(id){
+  currentView = id;
+  phaseFilter = 'all';
+  stagedFiles = [];
+  renderSidebar();
+  renderPanel();
+}
+
+function renderSidebar(){
+  const el = document.getElementById('sidebar');
+  const allCount = entries.filter(e=>e.type!=='checkin').length;
+  const checkinCount = entries.filter(e=>e.type==='checkin').length;
+
+  const rows = [];
+  rows.push(sideRow('all', '📚', '전체 기록', allCount, '#131A2B'));
+  rows.push('<div class="sidebar-label">학습영역</div>');
+  DOMAINS.forEach(d=>{
+    const count = entries.filter(e=>e.type!=='checkin' && e.domain===d.id).length;
+    rows.push(sideRow(d.id, d.icon, d.short, count, d.color));
+  });
+  rows.push('<div class="side-divider"></div>');
+  rows.push(sideRow('checkin', '📊', '역량 체크인', checkinCount, '#0EA5A5'));
+  rows.push('<div class="side-divider"></div>');
+  rows.push(sideRow('ai-chat', '🤖', 'AI와 대화', chatThreads.length, '#7C5CFC'));
+
+  el.innerHTML = rows.join('');
+  el.querySelectorAll('.side-item').forEach(item=>{
+    item.addEventListener('click', ()=> selectView(item.dataset.view));
+  });
+}
+function sideRow(id, icon, label, count, color){
+  const active = currentView === id;
+  const style = active ? `background:${color}1A; border-color:${color}; color:${color};` : '';
+  return `<div class="side-item ${active?'active':''}" data-view="${id}" style="${style}">
+    <span class="side-icon">${icon}</span>
+    <span class="side-label" style="${active?'color:'+color:''}">${escapeHtmlAttr(label)}</span>
+    <span class="side-count">${count}</span>
+  </div>`;
+}
+
+/* ===================== PANEL ===================== */
+function renderPanel(){
+  const panel = document.getElementById('panel');
+  if(currentView === 'checkin'){
+    panel.innerHTML = checkinPanelHtml();
+    wireCheckinPanel();
+  } else if(currentView === 'ai-chat'){
+    panel.innerHTML = chatPanelHtml();
+    wireChatPanel();
+  } else {
+    panel.innerHTML = recordPanelHtml();
+    wireRecordPanel();
+  }
+}
+
+function recordPanelHtml(){
+  const isAll = currentView === 'all';
+  const dom = isAll ? null : DOM_MAP[currentView];
+  const fullList = entries.filter(e => e.type!=='checkin' && (isAll || e.domain===currentView));
+  const list = fullList.filter(e => phaseFilter==='all' || (e.phase||'study')===phaseFilter).sort((a,b)=>b.ts-a.ts);
+  const lastDate = fullList.length ? fullList.slice().sort((a,b)=>b.ts-a.ts)[0].date : '-';
+
+  const header = `
+    <div class="panel-header">
+      <div class="panel-breadcrumb">학습영역 ›</div>
+      <div class="panel-title">${isAll ? '📚 전체 기록' : dom.icon+' '+dom.label}</div>
+      ${dom ? `<div class="panel-desc">${escapeHtml(dom.desc)}</div>` : `<div class="panel-desc">학습영역 구분 없이, 실제로 겪은 일과 그 결과를 시간순으로 쌓아간다.</div>`}
+      <div class="panel-meta">기록 ${fullList.length}개 · 최근 ${lastDate}</div>
+    </div>`;
+
+  const phaseFilterBar = `
+    <div class="phase-filter" id="phase-filter">
+      ${phaseFilterPillHtml('all', '전체')}
+      ${phaseFilterPillHtml('study', '📖 공부·역량확장')}
+      ${phaseFilterPillHtml('ops', '🛠 운영여정·결과')}
+    </div>`;
+
+  const composer = `
+    <div class="composer">
+      <input type="text" id="quick-add-input" placeholder="제목 (예: 처음으로 예산 재배분을 직접 결정했다)">
+      <div class="phase-pills" id="phase-pills">
+        ${phasePillHtml('study', '📖 공부·역량확장')}
+        ${phasePillHtml('ops', '🛠 운영여정·결과')}
+      </div>
+      <input type="text" id="milestone-metric" class="metric-input" placeholder="수치 결과 (선택, 예: 공헌이익률 +5%p)">
+      <label class="attach-input-btn" for="file-input">📎 사진·파일 첨부</label>
+      <input type="file" id="file-input" multiple accept="image/*,.pdf,.doc,.docx,.xlsx,.pptx,.txt" style="display:none;">
+      <div class="attach-staged" id="attach-staged"></div>
+      <div class="attach-progress" id="attach-progress" style="display:none;"></div>
+      <textarea id="entry-content" rows="6" placeholder="자세히 적어보세요 (선택)."></textarea>
+      <button class="composer-submit" id="quick-add-btn">기록 추가</button>
+    </div>`;
+
+  const listHtml = list.length
+    ? `<div class="record-list" id="record-list">` + list.map(e => buildEntryCardHtml(e, {showDomainTag:isAll})).join('') + `</div>`
+    : `<div class="empty-state">${fullList.length ? '이 필터에 해당하는 기록이 없습니다.' : '아직 기록이 없습니다. 위에서 첫 기록을 남겨보세요.'}</div>`;
+
+  return header + phaseFilterBar + composer + listHtml;
+}
+
+function phaseFilterPillHtml(id, label){
+  const active = phaseFilter === id;
+  return `<div class="phase-filter-pill ${active?'active':''}" data-pf="${id}">${label}</div>`;
+}
+function phasePillHtml(id, label){
+  const active = selectedPhase === id;
+  return `<div class="phase-pill ${active?'active':''}" data-phase="${id}">${label}</div>`;
+}
+
+function checkinPanelHtml(){
+  const checkins = entries.filter(e=>e.type==='checkin').sort((a,b)=>b.ts-a.ts);
+  const header = `
+    <div class="panel-header">
+      <div class="panel-breadcrumb">학습영역 ›</div>
+      <div class="panel-title">📊 역량 체크인</div>
+      <div class="panel-desc">6가지 경영자 역량을 분기 1회 정도 자가진단한다. 점수가 쌓이면 성장 곡선으로 확인할 수 있다.</div>
+      <div class="panel-meta">체크인 ${checkins.length}회</div>
+    </div>`;
+
+  const chart = `<div class="chart-card" id="chart-card"></div>`;
+  const snapshot = `<div class="chart-card" id="snapshot-card"></div>`;
+
+  const form = `
+    <div class="composer">
+      <input type="text" id="checkin-title" placeholder="이번 체크인 한 줄 요약 (예: 3분기 자가진단)">
+      <div class="checkin-grid" id="checkin-grid"></div>
+      <textarea id="checkin-note" rows="4" placeholder="이번 점수를 이렇게 준 이유 (선택)"></textarea>
+      <button class="composer-submit" id="checkin-submit">체크인 저장</button>
+    </div>`;
+
+  const listHtml = checkins.length
+    ? `<div class="record-list" id="record-list">` + checkins.map(e => buildEntryCardHtml(e, {showDomainTag:false})).join('') + `</div>`
+    : `<div class="empty-state">아직 체크인 기록이 없습니다.</div>`;
+
+  return header + chart + snapshot + form + listHtml;
+}
+
+/* ===================== AI CHAT ===================== */
+function buildEntriesContext(){
+  const nonCheckin = entries.filter(e=>e.type!=='checkin').sort((a,b)=>a.ts-b.ts);
+  const checkins = entries.filter(e=>e.type==='checkin').sort((a,b)=>a.ts-b.ts);
+
+  const lines = [];
+  nonCheckin.forEach(e=>{
+    const dom = e.domain ? (DOM_MAP[e.domain]?.label || e.domain) : '미분류';
+    const phase = (e.phase||'study')==='ops' ? '운영여정·결과' : '공부·역량확장';
+    let line = `[${e.date}] (${dom} / ${phase}) ${e.title}`;
+    if(e.content) line += ` — ${e.content.slice(0,400)}`;
+    if(e.metric) line += ` [수치결과: ${e.metric}]`;
+    if(e.outcome) line += ` [결과(${e.outcome.result}): ${e.outcome.text.slice(0,300)}]`;
+    lines.push(line);
+  });
+  checkins.forEach(c=>{
+    const scoreStr = CATEGORIES.map(cat=>`${cat.short} ${c.scores[cat.id]}`).join(', ');
+    lines.push(`[${c.date}] (역량 체크인) ${c.title} — ${scoreStr}${c.content ? ' / 메모: '+c.content.slice(0,200) : ''}`);
+  });
+
+  if(lines.length === 0) return '(아직 기록된 내용이 없습니다.)';
+  return lines.join('\n');
+}
+
+function chatPanelHtml(){
+  const active = getActiveThread();
+  const messages = active ? active.messages : [];
+  const messagesHtml = messages.length
+    ? messages.map(m => `<div class="chat-msg ${m.role}">${escapeHtml(m.content)}</div>`).join('')
+    : `<div class="chat-empty">지금까지 남긴 기록을 바탕으로 대화합니다.<br>예: "이번 분기 재무 역량 얼마나 늘었어?" "브랜드·마케팅에서 최근에 뭐 했지?"</div>`;
+
+  const threadsSorted = chatThreads.slice().sort((a,b)=>b.updatedAt-a.updatedAt);
+  const threadListHtml = threadsSorted.length
+    ? threadsSorted.map(t => `
+        <div class="thread-item ${t.id===activeThreadId?'active':''}" data-tid="${t.id}">
+          <span class="thread-title">${escapeHtmlAttr(t.title)}</span>
+          <button class="thread-del" data-tid="${t.id}">×</button>
+        </div>`).join('')
+    : `<div class="thread-empty">대화 없음</div>`;
+
+  return `
+    <div class="panel-header">
+      <div class="panel-breadcrumb">워크스페이스 ›</div>
+      <div class="panel-title">🤖 AI와 대화</div>
+      <div class="panel-desc">질문할 때마다 지금까지 쓴 기록 전체를 참고자료로 함께 보내서 답합니다. 대화 기록은 이 브라우저에만 저장됩니다.</div>
+    </div>
+    <div class="chat-layout">
+      <div class="thread-list">
+        <button class="thread-new-btn" id="thread-new-btn">+ 새 대화</button>
+        <div class="thread-scroll">${threadListHtml}</div>
+      </div>
+      <div class="chat-box">
+        <div class="chat-messages" id="chat-messages">${messagesHtml}${chatLoading ? `<div class="chat-loading">생각하는 중...</div>` : ''}</div>
+        <div class="chat-input-row">
+          <textarea id="chat-input" rows="1" placeholder="기록에 대해 물어보세요..."></textarea>
+          <button class="chat-send-btn" id="chat-send-btn" ${chatLoading?'disabled':''}>전송</button>
+        </div>
+      </div>
+    </div>`;
+}
+
+function wireChatPanel(){
+  const messagesEl = document.getElementById('chat-messages');
+  messagesEl.scrollTop = messagesEl.scrollHeight;
+
+  document.getElementById('thread-new-btn').addEventListener('click', async ()=>{
+    createNewThread();
+    await saveChatHistory();
+    renderSidebar();
+    renderPanel();
+    document.getElementById('chat-input')?.focus();
+  });
+
+  document.querySelectorAll('.thread-item').forEach(item=>{
+    item.addEventListener('click', (ev)=>{
+      if(ev.target.classList.contains('thread-del')) return;
+      activeThreadId = parseInt(item.dataset.tid);
+      renderPanel();
+    });
+  });
+
+  document.querySelectorAll('.thread-del').forEach(btn=>{
+    btn.addEventListener('click', async (ev)=>{
+      ev.stopPropagation();
+      const tid = parseInt(btn.dataset.tid);
+      chatThreads = chatThreads.filter(t=>t.id!==tid);
+      if(activeThreadId===tid) activeThreadId = chatThreads.length ? chatThreads[chatThreads.length-1].id : null;
+      await saveChatHistory();
+      renderSidebar();
+      renderPanel();
+    });
+  });
+
+  const input = document.getElementById('chat-input');
+  const sendBtn = document.getElementById('chat-send-btn');
+
+  async function send(){
+    const text = input.value.trim();
+    if(!text || chatLoading) return;
+    let thread = getActiveThread();
+    if(!thread) thread = createNewThread();
+    thread.messages.push({role:'user', content:text});
+    if(thread.messages.filter(m=>m.role==='user').length === 1) thread.title = threadTitleFrom(thread.messages);
+    thread.updatedAt = Date.now();
+    input.value = '';
+    chatLoading = true;
+    await saveChatHistory();
+    renderSidebar();
+    renderPanel();
+
+    try{
+      const response = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          model: 'claude-sonnet-4-6',
+          max_tokens: 1000,
+          system: `당신은 권혜영님의 개인 성장 기록(권혜영 워크스페이스)을 잘 아는 코치입니다. 권혜영님의 목표는 "브랜드를 만드는 사람을 넘어, 브랜드를 지속적으로 성장시키는 경영자"가 되는 것입니다.
+아래는 권혜영님이 지금까지 남긴 기록입니다. 이 기록에 근거해서 질문에 답하세요. 기록에 없는 내용은 추측하지 말고 모른다고 말하세요. 답은 간결하고 구체적으로, 필요하면 기록의 날짜나 제목을 인용하세요.
+
+--- 기록 시작 ---
+${buildEntriesContext()}
+--- 기록 끝 ---`,
+          messages: thread.messages.map(m => ({role:m.role, content:m.content}))
+        })
+      });
+      const data = await response.json();
+      const textBlocks = (data.content || []).filter(b=>b.type==='text').map(b=>b.text);
+      const reply = textBlocks.join('\n').trim() || '(응답을 받지 못했습니다. 다시 시도해주세요.)';
+      thread.messages.push({role:'assistant', content:reply});
+    }catch(e){
+      thread.messages.push({role:'assistant', content:'오류가 발생했습니다. 잠시 후 다시 시도해주세요.'});
+    }
+    thread.updatedAt = Date.now();
+    chatLoading = false;
+    await saveChatHistory();
+    renderSidebar();
+    renderPanel();
+  }
+
+  input.addEventListener('keydown', (ev)=>{
+    if(ev.key !== 'Enter' || ev.shiftKey || ev.isComposing || ev.keyCode === 229) return;
+    ev.preventDefault();
+    send();
+  });
+  sendBtn.addEventListener('click', send);
+}
+
+/* ===================== ENTRY CARD (shared) ===================== */
+function buildEntryCardHtml(e, opts){
+  opts = opts || {};
+  const isEditing = editingEntries.has(e.id);
+  let body = '';
+  if(e.type==='checkin' && e.scores){
+    body = `<div class="entry-scores">${CATEGORIES.map(c=>`<span class="es">${c.short} <b style="color:${c.color}">${e.scores[c.id]}</b></span>`).join('')}</div>`
+         + (!isEditing && e.content ? `<div class="entry-content" style="margin-top:6px;">${escapeHtml(e.content)}</div>` : '');
+  } else {
+    body = (!isEditing && e.content) ? `<div class="entry-content">${escapeHtml(e.content)}</div>` : '';
+  }
+  if(e.metric){
+    body += `<div class="entry-metric">📈 ${escapeHtml(e.metric)}</div>`;
+  }
+  if(e.type !== 'checkin'){
+    if(e.outcome){
+      const OL = {positive:'👍 긍정적 결과', neutral:'➖ 중립적 결과', negative:'👎 부정적 결과'};
+      body += `<div class="outcome-block ${e.outcome.result}">
+        <span class="outcome-tag">${OL[e.outcome.result]}</span><span class="outcome-date">${e.outcome.date}</span>
+        <div class="outcome-text">${escapeHtml(e.outcome.text)}</div>
+      </div>`;
+    } else if(outcomeEditing.has(e.id)){
+      body += `<div class="outcome-form">
+        <div class="outcome-result-row">
+          <select class="outcome-result-select" data-id="${e.id}">
+            <option value="positive">👍 긍정적</option>
+            <option value="neutral" selected>➖ 중립</option>
+            <option value="negative">👎 부정적</option>
+          </select>
+        </div>
+        <textarea class="outcome-input" data-id="${e.id}" rows="4" placeholder="실제로 어떤 결과가 나왔나요?"></textarea>
+        <button class="outcome-save" data-id="${e.id}">결과 저장</button><button class="outcome-cancel" data-id="${e.id}">취소</button>
+      </div>`;
+    } else {
+      body += `<button class="outcome-toggle" data-id="${e.id}">+ 결과 기록하기</button>`;
+    }
+  }
+  if(e.attachments && e.attachments.length){
+    body += `<div class="entry-attachments">` + e.attachments.map(a=>{
+      const key = 'hyeyoung-file-' + a.id;
+      const dataUrl = attachmentCache[key];
+      if(a.type && a.type.startsWith('image/')){
+        return `<span class="attach-del">
+          <img class="attach-thumb" src="${dataUrl || ''}" data-dl="${a.id}" data-name="${escapeHtmlAttr(a.name)}" title="${escapeHtmlAttr(a.name)} · ${formatSize(a.size)} (클릭하여 다운로드)">
+          <button class="attach-del-btn" data-entry="${e.id}" data-att="${a.id}">×</button>
+        </span>`;
+      }
+      return `<span class="attach-del">
+        <span class="attach-file-chip">
+          <span class="af-icon">📄</span>
+          <span><span class="af-name">${escapeHtmlAttr(a.name)}</span><br><span class="af-size">${formatSize(a.size)}</span></span>
+          <span class="af-dl" data-dl="${a.id}" data-name="${escapeHtmlAttr(a.name)}">↓</span>
+        </span>
+        <button class="attach-del-btn" data-entry="${e.id}" data-att="${a.id}">×</button>
+      </span>`;
+    }).join('') + `</div>`;
+  }
+  if(e.type !== 'checkin'){
+    body += `<button class="entry-attach-add" data-entry="${e.id}">📎 + 첨부 추가</button><input type="file" class="entry-file-input" data-entry="${e.id}" multiple accept="image/*,.pdf,.doc,.docx,.xlsx,.pptx,.txt" style="display:none;">`;
+  }
+  const dom = (opts.showDomainTag && e.domain) ? DOM_MAP[e.domain] : null;
+  const domTag = dom ? `<span class="entry-dom-tag" style="border:1px solid ${dom.color}; color:${dom.color}">${dom.icon} ${dom.short}</span>` : '';
+  const phaseTag = e.type!=='checkin' ? `<span class="entry-phase-tag ${e.phase||'study'}">${(e.phase||'study')==='ops' ? '🛠 운영여정·결과' : '📖 공부·역량확장'}</span>` : '';
+  const exTag = e.isExample ? `<span class="entry-example-tag">예시</span>` : '';
+  let borderColor = 'var(--faint)';
+  if(e.type==='checkin') borderColor = 'var(--teal)';
+  else if(e.outcome) borderColor = 'var(--navy)';
+  else if(e.metric) borderColor = 'var(--orange)';
+  return `<div class="entry" data-type="${e.type}" style="border-left-color:${borderColor}">
+    <div class="entry-top">
+      <div class="entry-meta">
+        <span class="entry-tag ${e.type}">${TYPE_LABEL[e.type]}</span>
+        ${phaseTag}
+        ${domTag}
+        ${exTag}
+        <span class="entry-date">${e.date}</span>
+      </div>
+      <div>
+        <button class="entry-edit" data-id="${e.id}" title="수정">✎</button>
+        <button class="entry-del" data-id="${e.id}">×</button>
+      </div>
+    </div>
+    ${isEditing ? `
+      <input type="text" class="edit-title-input" data-id="${e.id}" value="${escapeHtmlAttr(e.title)}">
+      <textarea class="edit-content-input" data-id="${e.id}" rows="5" placeholder="내용">${escapeHtml(e.content || '')}</textarea>
+      <button class="edit-save" data-id="${e.id}">저장</button><button class="edit-cancel" data-id="${e.id}">취소</button>
+    ` : `<div class="entry-title">${escapeHtml(e.title)}</div>`}
+    ${body}
+  </div>`;
+}
+
+function wireCardHandlers(scope){
+  scope.querySelectorAll('.entry-del').forEach(btn=>{
+    btn.addEventListener('click', async ()=>{
+      const id = parseInt(btn.dataset.id);
+      const entry = entries.find(e=>e.id===id);
+      if(entry && entry.attachments){
+        for(const a of entry.attachments){
+          try{ await window.storage.delete('hyeyoung-file-'+a.id, false); }catch(err){}
+          delete attachmentCache['hyeyoung-file-'+a.id];
+        }
+      }
+      entries = entries.filter(e => e.id !== id);
+      await saveEntries();
+      renderStats();
+      renderSidebar();
+      renderPanel();
+    });
+  });
+  scope.querySelectorAll('.entry-edit').forEach(btn=>{
+    btn.addEventListener('click', ()=>{ editingEntries.add(parseInt(btn.dataset.id)); renderPanel(); });
+  });
+  scope.querySelectorAll('.edit-cancel').forEach(btn=>{
+    btn.addEventListener('click', ()=>{ editingEntries.delete(parseInt(btn.dataset.id)); renderPanel(); });
+  });
+  scope.querySelectorAll('.edit-save').forEach(btn=>{
+    btn.addEventListener('click', async ()=>{
+      const id = parseInt(btn.dataset.id);
+      const titleEl = scope.querySelector(`.edit-title-input[data-id="${id}"]`);
+      const contentEl = scope.querySelector(`.edit-content-input[data-id="${id}"]`);
+      const newTitle = titleEl.value.trim();
+      if(!newTitle){ titleEl.focus(); return; }
+      const entry = entries.find(e=>e.id===id);
+      entry.title = newTitle;
+      entry.content = contentEl.value.trim();
+      editingEntries.delete(id);
+      await saveEntries();
+      renderSidebar();
+      renderPanel();
+    });
+  });
+  scope.querySelectorAll('.outcome-toggle').forEach(btn=>{
+    btn.addEventListener('click', ()=>{ outcomeEditing.add(parseInt(btn.dataset.id)); renderPanel(); });
+  });
+  scope.querySelectorAll('.outcome-cancel').forEach(btn=>{
+    btn.addEventListener('click', ()=>{ outcomeEditing.delete(parseInt(btn.dataset.id)); renderPanel(); });
+  });
+  scope.querySelectorAll('.outcome-save').forEach(btn=>{
+    btn.addEventListener('click', async ()=>{
+      const id = parseInt(btn.dataset.id);
+      const textEl = scope.querySelector(`.outcome-input[data-id="${id}"]`);
+      const selectEl = scope.querySelector(`.outcome-result-select[data-id="${id}"]`);
+      const text = textEl.value.trim();
+      if(!text){ textEl.focus(); return; }
+      const entry = entries.find(e=>e.id===id);
+      entry.outcome = {date:todayStr(), text, result:selectEl.value};
+      outcomeEditing.delete(id);
+      await saveEntries();
+      renderPanel();
+    });
+  });
+  scope.querySelectorAll('.attach-thumb, .af-dl').forEach(node=>{
+    node.addEventListener('click', ()=>{
+      const key = 'hyeyoung-file-' + node.dataset.dl;
+      const dataUrl = attachmentCache[key];
+      if(dataUrl) triggerDownload(dataUrl, node.dataset.name);
+      else alert('파일을 불러오는 중입니다. 잠시 후 다시 시도해주세요.');
+    });
+  });
+  scope.querySelectorAll('.attach-del-btn').forEach(btn=>{
+    btn.addEventListener('click', async ()=>{
+      const entryId = parseInt(btn.dataset.entry);
+      const attId = btn.dataset.att;
+      const entry = entries.find(x=>x.id===entryId);
+      if(entry && entry.attachments) entry.attachments = entry.attachments.filter(a=>a.id !== attId);
+      try{ await window.storage.delete('hyeyoung-file-' + attId, false); }catch(e){}
+      delete attachmentCache['hyeyoung-file-' + attId];
+      await saveEntries();
+      renderPanel();
+    });
+  });
+  scope.querySelectorAll('.entry-attach-add').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      scope.querySelector(`.entry-file-input[data-entry="${btn.dataset.entry}"]`).click();
+    });
+  });
+  scope.querySelectorAll('.entry-file-input').forEach(input=>{
+    input.addEventListener('change', async (ev)=>{
+      const entryId = parseInt(input.dataset.entry);
+      const entry = entries.find(x=>x.id===entryId);
+      if(!entry) return;
+      if(!entry.attachments) entry.attachments = [];
+      for(const file of Array.from(ev.target.files)){
+        if(file.size > MAX_FILE_BYTES){ alert(`"${file.name}" 파일이 너무 큽니다 (4MB 이하만 첨부 가능).`); continue; }
+        try{
+          let dataUrl = await readFileAsDataURL(file);
+          dataUrl = await compressImageIfNeeded(file, dataUrl);
+          const id = 'att' + Date.now() + Math.floor(Math.random()*1000);
+          const key = 'hyeyoung-file-' + id;
+          await window.storage.set(key, dataUrl, false);
+          attachmentCache[key] = dataUrl;
+          entry.attachments.push({id, name:file.name, type:file.type, size:dataUrl.length});
+        }catch(e){ alert(`"${file.name}" 처리 중 오류가 발생했습니다.`); }
+      }
+      ev.target.value = '';
+      await saveEntries();
+      renderPanel();
+    });
+  });
+}
+
+/* ===================== RECORD PANEL WIRING ===================== */
+function wireRecordPanel(){
+  const panel = document.getElementById('panel');
+  wireCardHandlers(panel);
+
+  const quickInput = document.getElementById('quick-add-input');
+
+  panel.querySelectorAll('.phase-pill').forEach(pill=>{
+    pill.addEventListener('click', ()=>{
+      selectedPhase = pill.dataset.phase;
+      panel.querySelectorAll('.phase-pill').forEach(p=>p.classList.remove('active'));
+      pill.classList.add('active');
+    });
+  });
+
+  panel.querySelectorAll('.phase-filter-pill').forEach(pill=>{
+    pill.addEventListener('click', ()=>{
+      phaseFilter = pill.dataset.pf;
+      renderPanel();
+    });
+  });
+
+  document.getElementById('file-input').addEventListener('change', (e)=>{
+    if(e.target.files.length) handleFilesStaged(e.target.files);
+    e.target.value = '';
+  });
+  renderStagedFiles();
+
+  async function submitEntry(){
+    const title = quickInput.value.trim();
+    if(!title){ quickInput.focus(); return; }
+    const contentEl = document.getElementById('entry-content');
+    const metricEl = document.getElementById('milestone-metric');
+    const domain = currentView === 'all' ? null : currentView;
+    const newEntry = {id:Date.now(), date:todayStr(), ts:Date.now(), type:'journal', title, content:contentEl.value.trim(), domain, phase:selectedPhase};
+    if(metricEl.value.trim()) newEntry.metric = metricEl.value.trim();
+    if(stagedFiles.length){
+      newEntry.attachments = [];
+      for(const f of stagedFiles){
+        const key = 'hyeyoung-file-' + f.id;
+        try{
+          await window.storage.set(key, f.dataUrl, false);
+          attachmentCache[key] = f.dataUrl;
+          newEntry.attachments.push({id:f.id, name:f.name, type:f.type, size:f.size});
+        }catch(e){ console.error('attachment save failed', e); }
+      }
+    }
+    entries.push(newEntry);
+    stagedFiles = [];
+    selectedPhase = 'study';
+    await saveEntries();
+    renderStats();
+    renderSidebar();
+    renderPanel();
+  }
+
+  quickInput.addEventListener('keydown', (ev)=>{
+    // 한글 입력(IME) 조합 중에는 Enter가 조합 확정으로도 쓰이므로, 조합 중 Enter는 무시한다
+    if(ev.key !== 'Enter' || ev.isComposing || ev.keyCode === 229) return;
+    submitEntry();
+  });
+  document.getElementById('quick-add-btn').addEventListener('click', submitEntry);
+}
+
+async function handleFilesStaged(fileList){
+  const progressEl = document.getElementById('attach-progress');
+  progressEl.style.display = 'block';
+  for(const file of Array.from(fileList)){
+    if(file.size > MAX_FILE_BYTES){ alert(`"${file.name}" 파일이 너무 큽니다 (4MB 이하만 첨부 가능).`); continue; }
+    progressEl.textContent = `"${file.name}" 처리 중...`;
+    try{
+      let dataUrl = await readFileAsDataURL(file);
+      dataUrl = await compressImageIfNeeded(file, dataUrl);
+      const id = 'att' + Date.now() + Math.floor(Math.random()*1000);
+      stagedFiles.push({id, name:file.name, type:file.type, size: dataUrl.length, dataUrl});
+    }catch(e){ alert(`"${file.name}" 처리 중 오류가 발생했습니다.`); }
+  }
+  progressEl.style.display = 'none';
+  renderStagedFiles();
+}
+function renderStagedFiles(){
+  const el = document.getElementById('attach-staged');
+  if(!el) return;
+  el.innerHTML = stagedFiles.map(f => `
+    <span class="attach-staged-chip">${f.type.startsWith('image/')?'🖼️':'📎'} ${escapeHtmlAttr(f.name)}<span class="rm" data-id="${f.id}">×</span></span>
+  `).join('');
+  el.querySelectorAll('.rm').forEach(rm=>{
+    rm.addEventListener('click', ()=>{
+      stagedFiles = stagedFiles.filter(f=>f.id !== rm.dataset.id);
+      renderStagedFiles();
+    });
+  });
+}
+
+/* ===================== CHECKIN PANEL WIRING ===================== */
+function buildCheckinGrid(){
+  const grid = document.getElementById('checkin-grid');
+  if(!grid) return;
+  grid.innerHTML = CATEGORIES.map(c => `
+    <div class="checkin-item">
+      <div class="ci-label"><b><span class="ci-dot" style="background:${c.color}"></span>${c.label}</b><span id="ci-val-${c.id}" style="color:${c.color}">3</span></div>
+      <input type="range" min="1" max="5" step="1" value="3" data-cat="${c.id}" style="accent-color:${c.color}"
+             oninput="document.getElementById('ci-val-'+this.dataset.cat).textContent=this.value">
+    </div>
+  `).join('');
+}
+
+function wireCheckinPanel(){
+  const panel = document.getElementById('panel');
+  wireCardHandlers(panel);
+  buildCheckinGrid();
+  renderChart();
+  renderSnapshot();
+
+  document.getElementById('checkin-submit').addEventListener('click', async ()=>{
+    const title = document.getElementById('checkin-title').value.trim() || '역량 체크인';
+    const note = document.getElementById('checkin-note').value.trim();
+    const scores = {};
+    document.querySelectorAll('#checkin-grid input[type="range"]').forEach(inp=>{
+      scores[inp.dataset.cat] = parseInt(inp.value);
+    });
+    entries.push({id:Date.now(), date:todayStr(), ts:Date.now(), type:'checkin', title, content:note, scores});
+    await saveEntries();
+    renderSidebar();
+    renderPanel();
+  });
+}
+
+function renderChart(){
+  const checkins = entries.filter(e=>e.type==='checkin').sort((a,b)=>a.ts-b.ts);
+  const card = document.getElementById('chart-card');
+  if(!card) return;
+  if(checkins.length === 0){
+    card.innerHTML = `<div class="chart-empty"><b>아직 역량 체크인이 없습니다</b>첫 체크인을 남기면 여기에 성장 곡선이 그려집니다.</div>`;
+    return;
+  }
+  const w = 640, h = 160, padL = 30, padR = 20, padT = 16, padB = 26;
+  const innerW = w - padL - padR, innerH = h - padT - padB;
+  const n = checkins.length;
+  const xFor = i => n===1 ? padL + innerW/2 : padL + (innerW * i/(n-1));
+  const yFor = v => padT + innerH - ((v-1)/4)*innerH;
+  const points = checkins.map((c,i)=>({x:xFor(i), y:yFor(avgScore(c.scores)), c}));
+  const path = points.map((p,i)=> (i===0?'M':'L') + p.x.toFixed(1) + ' ' + p.y.toFixed(1)).join(' ');
+  const gridLines = [1,2,3,4,5].map(v => `<line x1="${padL}" y1="${yFor(v)}" x2="${w-padR}" y2="${yFor(v)}" stroke="#EEF0F3" stroke-width="1"/><text x="${padL-8}" y="${yFor(v)+3}" font-size="9" fill="#9AA3B2" text-anchor="end" font-family="Pretendard">${v}</text>`).join('');
+  const nodes = points.map(p => `<circle cx="${p.x}" cy="${p.y}" r="4" fill="#FC9600" stroke="#fff" stroke-width="1.5"/>`).join('');
+  const dateLabels = points.filter((_,i)=> i===0 || i===points.length-1).map(p=>
+    `<text x="${p.x}" y="${h-6}" font-size="9" fill="#9AA3B2" text-anchor="${p===points[0]?'start':'end'}" font-family="Pretendard">${p.c.date}</text>`
+  ).join('');
+  card.innerHTML = `<svg id="chart-svg" viewBox="0 0 ${w} ${h}" xmlns="http://www.w3.org/2000/svg">
+      ${gridLines}
+      <path d="${path}" fill="none" stroke="#FC9600" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+      ${nodes}
+      ${dateLabels}
+    </svg>
+    <div class="chart-legend">
+      <span><span class="leg-dot" style="background:#FC9600"></span>평균 역량 점수 (1~5)</span>
+      <span>체크인 ${n}회 · 최근: ${checkins[n-1].date}</span>
+    </div>`;
+}
+
+function renderSnapshot(){
+  const checkins = entries.filter(e=>e.type==='checkin').sort((a,b)=>b.ts-a.ts);
+  const card = document.getElementById('snapshot-card');
+  if(!card) return;
+  if(checkins.length === 0){
+    card.innerHTML = `<div class="chart-empty"><b>아직 스냅샷이 없습니다</b>역량 체크인을 남기면 카테고리별 강약점이 여기 표시됩니다.</div>`;
+    return;
+  }
+  const latest = checkins[0];
+  const minScore = Math.min(...CATEGORIES.map(c=>latest.scores[c.id] ?? 5));
+  card.innerHTML = CATEGORIES.map(c=>{
+    const v = latest.scores[c.id] || 0;
+    const isWeak = v === minScore;
+    return `<div class="snap-row ${isWeak?'weak':''}">
+      <div class="snap-top"><b>${c.label}${isWeak?'<span class="weak-tag">⚠️ 가장 약한 영역</span>':''}</b><span style="color:${c.color}">${v} / 5</span></div>
+      <div class="snap-track"><div class="snap-fill" style="width:${v/5*100}%; background:${c.color}"></div></div>
+    </div>`;
+  }).join('') + `<div class="chart-legend"><span>${latest.date} 기준 (${TYPE_LABEL.checkin} · ${latest.title})</span></div>`;
+}
+
+/* ===================== HERO STATS ===================== */
+function renderStats(){
+  document.getElementById('stat-total').textContent = entries.length;
+  const checkins = entries.filter(e=>e.type==='checkin').sort((a,b)=>a.ts-b.ts);
+  document.getElementById('stat-checkins').textContent = checkins.length;
+  if(entries.length > 0){
+    const earliest = Math.min(...entries.map(e=>e.ts));
+    const days = Math.max(0, Math.floor((Date.now()-earliest)/86400000));
+    document.getElementById('stat-days').innerHTML = days + '<span>일</span>';
+  } else {
+    document.getElementById('stat-days').innerHTML = '0<span>일</span>';
+  }
+  const growthEl = document.getElementById('stat-growth');
+  if(checkins.length >= 2){
+    const first = avgScore(checkins[0].scores);
+    const last = avgScore(checkins[checkins.length-1].scores);
+    const diff = (last-first).toFixed(1);
+    growthEl.textContent = (diff>=0?'+':'') + diff;
+  } else {
+    growthEl.textContent = '–';
+  }
+}
+
+/* ===================== FOOTER ACTIONS ===================== */
+document.getElementById('reset-all').addEventListener('click', async ()=>{
+  for(const key of Object.keys(attachmentCache)){
+    try{ await window.storage.delete(key, false); }catch(e){}
+  }
+  attachmentCache = {};
+  entries = [];
+  await saveEntries();
+  renderStats();
+  renderSidebar();
+  renderPanel();
+});
+document.getElementById('load-example').addEventListener('click', async ()=>{
+  const existingIds = new Set(entries.map(e=>e.id));
+  EXAMPLE_ENTRIES.forEach(ex => { if(!existingIds.has(ex.id)) entries.push(ex); });
+  await saveEntries();
+  renderStats();
+  renderSidebar();
+  renderPanel();
+});
+document.getElementById('clear-example').addEventListener('click', async ()=>{
+  entries = entries.filter(e => !e.isExample);
+  await saveEntries();
+  renderStats();
+  renderSidebar();
+  renderPanel();
+});
+
+/* ===================== INIT ===================== */
+(async function init(){
+  await loadEntries();
+  await loadAttachmentCache();
+  await loadChatHistory();
+  renderStats();
+  renderSidebar();
+  renderPanel();
+})();
+</script>
+</body>
+</html>
