@@ -19,7 +19,7 @@
     display: flex;
     gap: 12px;
     flex-wrap: wrap;
-    margin-bottom: 24px;
+    margin-bottom: 16px;
     align-items: stretch;
   }
   .panel {
@@ -75,6 +75,10 @@
   }
   .memo-box { min-width: 0; }
   .memo-label { font-size: 12px; font-weight: 700; color: #8B95A1; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
+  .memo-title-text {
+    font-size: 12px; font-weight: 700; color: #8B95A1; flex: 1; min-width: 0;
+    padding: 2px 0; border-radius: 4px; cursor: default;
+  }
   .memo-title-input {
     border: none; outline: none; background: transparent; font-size: 12px; font-weight: 700;
     color: #8B95A1; font-family: inherit; flex: 1; min-width: 0; padding: 2px 0; border-radius: 4px;
@@ -98,7 +102,7 @@
   .todo-row.dragging { opacity: 0.35; }
   .day-cell.drop-hover { background: #FFF4E6 !important; box-shadow: inset 0 0 0 2px #FC9600; }
   .todo-text { font-size: 13px; flex: 1; min-width: 0; word-break: break-word; white-space: pre-wrap; line-height: 1.6; padding-top: 1px; }
-  .todo-text.done { text-decoration: line-through; color: #B0B8C1; }
+  .todo-text.done { color: #B0B8C1; }
   .icon-btn { border: none; background: none; cursor: pointer; padding: 0; flex-shrink: 0; font-size: 12px; color: #C3C9CF; transition: color 0.15s ease; }
   .icon-btn:hover { color: #6B7684; }
   .rollover-btn { color: #FC9600; font-size: 14px; }
@@ -156,6 +160,16 @@
   input.boxed:hover, textarea.boxed:hover { background: #F9FAFB; }
   input.boxed:focus, textarea.boxed:focus { background: #fff; box-shadow: 0 0 0 2px #FFD9A0; }
 
+  .journal-title-row { margin-bottom: 20px; display: flex; align-items: center; gap: 16px; }
+  .title { font-size: 30px; font-weight: 800; }
+  .page-tabs { display: flex; gap: 8px; }
+  .page-tab {
+    border: none; background: #fff; color: #8B95A1; font-size: 14px; font-weight: 700;
+    padding: 9px 18px; border-radius: 100px; cursor: pointer;
+    box-shadow: 0 1px 2px rgba(25,31,40,0.03), 0 2px 8px rgba(25,31,40,0.04);
+  }
+  .page-tab:hover { color: #191F28; }
+  .page-tab.active { background: #FC9600; color: #fff; }
   .journal-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
   .title { font-size: 20px; font-weight: 700; }
   .subtitle { font-size: 12px; color: #8B95A1; margin-top: 4px; }
@@ -187,12 +201,24 @@
     font-size: 11px; font-weight: 700; white-space: nowrap; flex-shrink: 0;
     padding: 3px 9px; border-radius: 100px; background: #FFF4E6;
   }
+  .sticky-top {
+  }
   .day-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
   .day-date-label { font-size: 12px; color: #8B95A1; font-weight: 500; }
   .day-date-label.today { color: #FC9600; font-weight: 700; }
 </style>
 </head>
 <body>
+
+<div id="stickyTop" class="sticky-top">
+
+<div class="journal-title-row">
+  <div class="title" id="journalTitle">업무일지</div>
+  <div class="page-tabs">
+    <button class="page-tab active" onclick="void 0">업무일지</button>
+    <button class="page-tab" onclick="alert('회의록 기능은 준비 중입니다.')">회의록</button>
+  </div>
+</div>
 
 <div class="top-row">
   <div class="panel mini-cal">
@@ -220,28 +246,24 @@
 </div>
 
 <div class="journal-header">
-  <div>
-    <div class="title" id="journalTitle">업무일지</div>
-    <div class="subtitle">할 일을 더블클릭해서 편집하고, 드래그로 선택한 뒤 아래 툴바로 서식을 적용하세요</div>
+  <div class="fixed-toolbar" id="fixedToolbar">
+    <button type="button" class="toolbar-btn" data-cmd="bold"><b>B</b></button>
+    <button type="button" class="toolbar-btn" data-cmd="italic"><i>I</i></button>
+    <span class="toolbar-sep"></span>
+    <button type="button" class="color-swatch" data-color="#FC9600" style="background:#FC9600;"></button>
+    <button type="button" class="color-swatch" data-color="#3182F6" style="background:#3182F6;"></button>
+    <button type="button" class="color-swatch" data-color="#00C896" style="background:#00C896;"></button>
+    <button type="button" class="color-swatch" data-color="#F04452" style="background:#F04452;"></button>
+    <button type="button" class="color-swatch" data-color="#7C6FE8" style="background:#7C6FE8;"></button>
+    <button type="button" class="color-swatch" data-color="#191F28" style="background:#191F28;"></button>
+    <button type="button" class="color-swatch color-swatch-reset" data-color="reset" title="기본색">✕</button>
   </div>
-  <div style="display:flex; gap:14px; align-items:center;">
-    <div class="fixed-toolbar" id="fixedToolbar">
-      <button type="button" class="toolbar-btn" data-cmd="bold"><b>B</b></button>
-      <button type="button" class="toolbar-btn" data-cmd="italic"><i>I</i></button>
-      <span class="toolbar-sep"></span>
-      <button type="button" class="color-swatch" data-color="#FC9600" style="background:#FC9600;"></button>
-      <button type="button" class="color-swatch" data-color="#3182F6" style="background:#3182F6;"></button>
-      <button type="button" class="color-swatch" data-color="#00C896" style="background:#00C896;"></button>
-      <button type="button" class="color-swatch" data-color="#F04452" style="background:#F04452;"></button>
-      <button type="button" class="color-swatch" data-color="#7C6FE8" style="background:#7C6FE8;"></button>
-      <button type="button" class="color-swatch" data-color="#191F28" style="background:#191F28;"></button>
-      <button type="button" class="color-swatch color-swatch-reset" data-color="reset" title="기본색">✕</button>
-    </div>
-    <div style="display:flex; gap:6px;">
-      <button class="nav-btn-lg" onclick="MiniCal.prevMonth()">‹</button>
+  <div style="display:flex; gap:6px;">
+    <button class="nav-btn-lg" onclick="MiniCal.prevMonth()">‹</button>
       <button class="nav-btn-lg" onclick="MiniCal.nextMonth()">›</button>
     </div>
-  </div>
+</div>
+
 </div>
 
 <div id="journalError" class="error" style="display:none;"></div>
@@ -288,14 +310,14 @@ const MiniCal = {
     if (this.viewMonth < 0) { this.viewMonth = 11; this.viewYear -= 1; }
     this.render();
     if (typeof Journal !== "undefined") Journal.render();
-    if (typeof QuickMemos !== "undefined") QuickMemos.loadMonth();
+    if (typeof QuickMemos !== "undefined") QuickMemos.loadContentForMonth();
   },
   nextMonth() {
     this.viewMonth += 1;
     if (this.viewMonth > 11) { this.viewMonth = 0; this.viewYear += 1; }
     this.render();
     if (typeof Journal !== "undefined") Journal.render();
-    if (typeof QuickMemos !== "undefined") QuickMemos.loadMonth();
+    if (typeof QuickMemos !== "undefined") QuickMemos.loadContentForMonth();
   },
   render() {
     document.getElementById("miniCalTitle").textContent = `${this.viewYear}.${pad(this.viewMonth + 1)}`;
@@ -327,76 +349,142 @@ const MiniCal = {
    Quick memos — 3 independent freeform notepads
    ============================================================ */
 const QuickMemos = {
-  memos: [],
+  DEFS_KEY: "quick-memos:defs",
+  defs: [], // [{id, title}] — fixed, same every month
+  content: {}, // { [id]: text } — specific to the currently viewed month
   saveTimer: null,
-  loadToken: 0,
+  contentLoadToken: 0,
 
-  keyForCurrentMonth() {
-    return `quick-memos:${MiniCal.viewYear}-${pad(MiniCal.viewMonth + 1)}`;
+  contentKeyForCurrentMonth() {
+    return `quick-memos-content:${MiniCal.viewYear}-${pad(MiniCal.viewMonth + 1)}`;
   },
 
   async init() {
-    await this.loadMonth();
+    let defs = [];
+    try {
+      const result = await window.storage.get(this.DEFS_KEY, false);
+      if (result && result.value) {
+        const parsed = JSON.parse(result.value);
+        if (Array.isArray(parsed)) defs = parsed;
+      }
+    } catch (e) {}
+    if (defs.length === 0) {
+      // migrate from the old combined (title+text) formats used briefly before, so nothing gets lost
+      try {
+        const oldResult = await window.storage.get("quick-memos:data", false);
+        if (oldResult && oldResult.value) {
+          const parsed = JSON.parse(oldResult.value);
+          if (Array.isArray(parsed) && parsed.length > 0) {
+            defs = parsed.map((m) => ({ id: m.id, title: m.title || "메모" }));
+            // seed this month's content from that old data too
+            const seedContent = {};
+            parsed.forEach((m) => { if (m.text) seedContent[m.id] = m.text; });
+            if (Object.keys(seedContent).length > 0) {
+              this.content = seedContent;
+              await window.storage.set(this.contentKeyForCurrentMonth(), JSON.stringify(seedContent), false);
+            }
+          }
+        }
+      } catch (e) {}
+    }
+    if (defs.length === 0) {
+      defs = [{ id: newId(), title: "메모" }, { id: newId(), title: "메모" }];
+    }
+    this.defs = defs;
+    this.persistDefs();
+    await this.loadContentForMonth();
   },
-  async loadMonth() {
-    const myToken = ++this.loadToken;
-    const key = this.keyForCurrentMonth();
-    let loaded = [];
+
+  async loadContentForMonth() {
+    const myToken = ++this.contentLoadToken;
+    const key = this.contentKeyForCurrentMonth();
+    let content = {};
     try {
       const result = await window.storage.get(key, false);
       if (result && result.value) {
         const parsed = JSON.parse(result.value);
-        if (Array.isArray(parsed)) loaded = parsed;
+        if (parsed && typeof parsed === "object") content = parsed;
       }
     } catch (e) {}
-    if (myToken !== this.loadToken) return; // a newer month load started while this was in flight
-    if (loaded.length === 0) {
-      loaded = [{ id: newId(), title: "메모", text: "" }, { id: newId(), title: "메모", text: "" }];
-    }
-    this.memos = loaded;
+    if (myToken !== this.contentLoadToken) return; // a newer month load started while this was in flight
+    this.content = content;
     this.render();
   },
+
   addMemo() {
-    this.memos.push({ id: newId(), title: "메모", text: "" });
+    this.defs.push({ id: newId(), title: "메모" });
     this.render();
-    this.persist();
+    this.persistDefs();
   },
   deleteMemo(id) {
-    this.memos = this.memos.filter((m) => m.id !== id);
+    this.defs = this.defs.filter((m) => m.id !== id);
+    delete this.content[id];
     this.render();
-    this.persist();
+    this.persistDefs();
+    this.persistContent();
   },
   updateMemo(id, text) {
-    const m = this.memos.find((x) => x.id === id);
-    if (m) m.text = text;
-    this.scheduleSave();
+    this.content[id] = text;
+    this.scheduleSaveContent();
   },
   updateMemoTitle(id, title) {
-    const m = this.memos.find((x) => x.id === id);
-    if (m) m.title = title;
-    this.scheduleSave();
+    const m = this.defs.find((x) => x.id === id);
+    if (m) m.title = title || "메모";
+    this.render();
+    this.persistDefs();
+  },
+  startEditTitle(spanEl, id) {
+    const m = this.defs.find((x) => x.id === id);
+    if (!m) return;
+    const input = document.createElement("input");
+    input.type = "text";
+    input.className = "memo-title-input";
+    input.spellcheck = false;
+    input.value = m.title || "메모";
+    spanEl.replaceWith(input);
+    input.focus();
+    input.select();
+    let committed = false;
+    const commit = () => {
+      if (committed) return;
+      committed = true;
+      QuickMemos.updateMemoTitle(id, input.value.trim());
+    };
+    input.addEventListener("blur", commit);
+    input.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") { e.preventDefault(); input.blur(); }
+      if (e.key === "Escape") { committed = true; QuickMemos.render(); }
+    });
   },
   autoSize(el) { el.style.height = "auto"; el.style.height = el.scrollHeight + "px"; },
-  scheduleSave() { clearTimeout(this.saveTimer); this.saveTimer = setTimeout(() => this.persist(), 500); },
-  async persist() {
-    try { await window.storage.set(this.keyForCurrentMonth(), JSON.stringify(this.memos), false); } catch (e) {}
+  scheduleSaveContent() { clearTimeout(this.saveTimer); this.saveTimer = setTimeout(() => this.persistContent(), 500); },
+  async persistDefs() {
+    try { await window.storage.set(this.DEFS_KEY, JSON.stringify(this.defs), false); } catch (e) {}
+  },
+  async persistContent() {
+    try { await window.storage.set(this.contentKeyForCurrentMonth(), JSON.stringify(this.content), false); } catch (e) {}
   },
 
   render() {
     const row = document.getElementById("memoRow");
     let html = "";
-    this.memos.forEach((m) => {
+    this.defs.forEach((m) => {
+      const text = this.content[m.id] || "";
       html += `<div class="panel memo-box">`;
-      html += `<div class="memo-label"><input type="text" id="memo-title-${m.id}" name="memo-title-${m.id}" class="memo-title-input" spellcheck="false" value="${escapeHtml(m.title || "메모")}" oninput="QuickMemos.updateMemoTitle('${m.id}', this.value)" /><button class="delete-memo-btn" onclick="QuickMemos.deleteMemo('${m.id}')">✕</button></div>`;
-      html += `<textarea id="memo-${m.id}" placeholder="적어두고 싶은 것" spellcheck="false">${escapeHtml(m.text)}</textarea>`;
+      html += `<div class="memo-label"><span class="memo-title-text" title="더블클릭: 제목 수정" ondblclick="QuickMemos.startEditTitle(this, '${m.id}')">${escapeHtml(m.title || "메모")}</span><button class="delete-memo-btn" onclick="QuickMemos.deleteMemo('${m.id}')">✕</button></div>`;
+      html += `<textarea id="memo-${m.id}" placeholder="적어두고 싶은 것" spellcheck="false">${escapeHtml(text)}</textarea>`;
       html += `</div>`;
     });
     row.innerHTML = html;
-    this.memos.forEach((m) => {
+    this.defs.forEach((m) => {
       const el = document.getElementById(`memo-${m.id}`);
       this.autoSize(el);
-      el.oninput = () => { this.updateMemo(m.id, el.value); this.autoSize(el); };
+      el.oninput = () => { this.updateMemo(m.id, el.value); this.autoSize(el); this.scheduleStickyUpdate(); };
     });
+    this.scheduleStickyUpdate();
+  },
+  scheduleStickyUpdate() {
+    setTimeout(() => { if (typeof updateStickyOffset === "function") updateStickyOffset(); }, 0);
   },
 };
 
@@ -657,10 +745,19 @@ document.querySelectorAll("#fixedToolbar button").forEach((btn) => {
   });
 });
 
+function updateStickyOffset() {
+  const el = document.getElementById("stickyTop");
+  if (el) document.documentElement.style.setProperty("--sticky-offset", `${el.offsetHeight}px`);
+}
+window.addEventListener("resize", updateStickyOffset);
+
 window.startApp = function () {
   MiniCal.init();
   QuickMemos.init();
   Journal.init();
+  // give the DOM a moment to paint the sticky block before measuring it
+  setTimeout(updateStickyOffset, 50);
+  setTimeout(updateStickyOffset, 300);
 };
 </script>
 
