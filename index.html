@@ -1,1535 +1,583 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>권혜영 워크스페이스</title>
-<link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css" />
+<meta charset="UTF-8" />
+<title>업무일지</title>
 <style>
-  :root{
-    --bg:#F5F6F8; --surface:#FFFFFF;
-    --navy:#131A2B; --navy-2:#1D2740;
-    --ink:#191F28; --muted:#6B7684; --faint:#9AA3B2; --line:#E5E8EB;
-    --orange:#FC9600; --orange-tint:#FFF1DD; --orange-deep:#D67D00;
-    --teal:#0EA5A5; --teal-tint:#E4F7F7;
-    --radius:14px;
-  }
-  *{box-sizing:border-box; margin:0; padding:0;}
-  body{font-family:'Pretendard', -apple-system, sans-serif; background:var(--bg); color:var(--ink); line-height:1.55; -webkit-font-smoothing:antialiased; padding-bottom:60px;}
-  .wrap{max-width:1600px; margin:0 auto; padding:0 40px;}
-
-  /* login screen */
-  #login-screen{
-    position:fixed; inset:0; background:linear-gradient(180deg, var(--navy) 0%, var(--navy-2) 100%);
-    display:flex; align-items:center; justify-content:center; z-index:100;
-  }
-  .login-card{background:var(--surface); border-radius:16px; padding:36px 32px; width:100%; max-width:360px;}
-  .login-card h2{font-size:18px; font-weight:800; margin-bottom:4px;}
-  .login-card p{font-size:12.5px; color:var(--muted); margin-bottom:22px;}
-  .login-card input{
-    width:100%; font-family:inherit; font-size:13.5px; border:1px solid var(--line); border-radius:8px;
-    padding:11px 13px; margin-bottom:10px; color:var(--ink); background:var(--bg);
-  }
-  .login-card input:focus{outline:none; border-color:var(--orange);}
-  .login-card button{
-    width:100%; background:var(--navy); color:#fff; border:none; border-radius:8px; padding:12px;
-    font-size:13.5px; font-weight:700; cursor:pointer; font-family:inherit; margin-top:6px;
-  }
-  .login-card button:disabled{background:var(--faint); cursor:default;}
-  .login-error{color:#E5484D; font-size:12px; margin-top:10px; min-height:16px;}
-  #app-root{display:none;}
-  .logout-btn{
-    background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.18); color:rgba(255,255,255,.8);
-    font-size:11.5px; font-weight:600; padding:6px 12px; border-radius:20px; cursor:pointer; font-family:inherit;
+  @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
+  * { box-sizing: border-box; }
+  body {
+    font-family: 'Pretendard', 'Apple SD Gothic Neo','Malgun Gothic',-apple-system,sans-serif;
+    color: #191F28;
+    margin: 0;
+    padding: 32px;
+    background: #F2F4F6;
+    -webkit-font-smoothing: antialiased;
   }
 
-  .hero{background:linear-gradient(180deg, var(--navy) 0%, var(--navy-2) 100%); color:#fff; padding:40px 0 30px;}
-  .hero-top{display:flex; justify-content:space-between; align-items:flex-start;}
-  .eyebrow{font-size:12px; font-weight:600; letter-spacing:.14em; text-transform:uppercase; color:var(--orange); margin-bottom:10px;}
-  .hero h1{font-size:24px; font-weight:800; letter-spacing:-0.02em;}
-  .os-tag{margin-top:6px; font-size:12px; font-weight:600; color:var(--orange);}
-  .hero p.sub{margin-top:8px; font-size:13.5px; color:rgba(255,255,255,.6); max-width:480px;}
-
-  .goal-badge{
-    margin-top:18px; display:inline-flex; align-items:center; gap:10px;
-    background:rgba(252,150,0,.1); border:1px solid rgba(252,150,0,.35); border-radius:12px;
-    padding:12px 16px;
+  .top-row {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 24px;
+    align-items: stretch;
   }
-  .goal-badge .g-label{font-size:10px; font-weight:800; letter-spacing:.1em; color:var(--orange); flex:none;}
-  .goal-badge .g-text{font-size:13.5px; font-weight:700; color:#fff; line-height:1.5;}
-  .goal-badge .g-text .strike{color:rgba(255,255,255,.4); font-weight:500; text-decoration:line-through; margin-right:5px;}
-
-  .stat-row{display:flex; gap:10px; margin-top:24px; flex-wrap:wrap;}
-  .stat{background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.1); border-radius:12px; padding:12px 16px; flex:1; min-width:120px;}
-  .stat .v{font-size:20px; font-weight:800;}
-  .stat .v span{font-size:12px; font-weight:600; color:rgba(255,255,255,.5);}
-  .stat .l{font-size:11px; color:rgba(255,255,255,.5); margin-top:2px;}
-  .stat .v.pos{color:var(--orange);}
-
-  /* ---------- workspace layout (sidebar + panel) ---------- */
-  .workspace{display:flex; gap:22px; align-items:flex-start; padding-top:28px;}
-  .sidebar{width:236px; flex:none; display:flex; flex-direction:column; gap:5px; position:sticky; top:16px;}
-  .sidebar-label{font-size:10.5px; font-weight:800; color:var(--faint); letter-spacing:.08em; text-transform:uppercase; margin:4px 0 4px 4px;}
-  .side-item{
-    display:flex; align-items:center; gap:9px; padding:10px 11px; border-radius:10px; cursor:pointer;
-    border:1px solid transparent; background:transparent;
+  .panel {
+    background: #fff;
+    border: none;
+    border-radius: 20px;
+    box-shadow: 0 1px 2px rgba(25,31,40,0.03), 0 4px 14px rgba(25,31,40,0.04);
+    padding: 18px;
   }
-  .side-item:hover{background:#EEF0F3;}
-  .side-item.active{border-color:currentColor;}
-  .side-icon{font-size:15px; flex:none; width:18px; text-align:center;}
-  .side-label{flex:1; font-size:13px; font-weight:700; color:var(--ink); min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
-  .side-count{font-size:11px; font-weight:700; color:var(--muted); background:#fff; border-radius:20px; padding:2px 8px; flex:none;}
-  .side-divider{height:1px; background:var(--line); margin:10px 6px;}
-
-  .panel{flex:1; min-width:0;}
-  .panel-header{margin-bottom:16px;}
-  .panel-breadcrumb{font-size:11px; font-weight:700; color:var(--faint); margin-bottom:6px;}
-  .panel-title{display:flex; align-items:center; gap:9px; font-size:19px; font-weight:800; letter-spacing:-0.01em;}
-  .panel-desc{font-size:12.5px; color:var(--muted); margin-top:7px; max-width:600px;}
-  .panel-meta{font-size:11.5px; color:var(--faint); margin-top:9px;}
-
-  .quick-add-bar{
-    border:1.5px dashed var(--line); border-radius:10px; padding:13px 14px; margin-bottom:8px; background:var(--surface);
-    display:flex; align-items:center; gap:8px;
+  .mini-cal { width: 240px; flex-shrink: 0; }
+  .mini-cal-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+  .mini-cal-title { font-size: 14px; font-weight: 700; }
+  .mini-nav-btn {
+    border: none; background: #F2F4F6; color: #6B7684; font-size: 14px; cursor: pointer;
+    width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    transition: background 0.15s ease;
   }
-  .quick-add-bar input{border:none; background:transparent; font-size:13.5px; width:100%; font-family:inherit; color:var(--ink);}
-  .quick-add-bar input:focus{outline:none;}
-  .quick-add-bar input::placeholder{color:var(--faint); font-weight:600;}
-  .quick-add-btn{
-    flex:none; background:var(--navy); color:#fff; border:none; border-radius:7px; padding:7px 14px;
-    font-size:12px; font-weight:700; cursor:pointer; font-family:inherit;
+  .mini-nav-btn:hover { background: #E8EBED; color: #191F28; }
+  .nav-btn-lg {
+    border: none; background: #fff; color: #6B7684; font-size: 18px; cursor: pointer;
+    width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 1px 2px rgba(25,31,40,0.03), 0 2px 8px rgba(25,31,40,0.04);
+    transition: background 0.15s ease, color 0.15s ease;
   }
-  .quick-add-btn:disabled{background:var(--faint); cursor:default;}
-
-  .phase-pills{display:flex; gap:6px; margin-bottom:8px;}
-  .phase-pill{
-    font-size:12px; font-weight:700; padding:7px 14px; border-radius:20px; cursor:pointer;
-    border:1px solid var(--line); background:var(--bg); color:var(--muted);
+  .nav-btn-lg:hover { background: #FFF4E6; color: #FC9600; }
+  .mini-weekday-row { display: grid; grid-template-columns: repeat(7, 1fr); margin-bottom: 4px; }
+  .mini-weekday-cell { text-align: center; font-size: 10px; color: #B0B8C1; font-weight: 700; }
+  .mini-weekday-cell.sun { color: #F04452; }
+  .mini-weekday-cell.sat { color: #3182F6; }
+  .mini-day-grid { display: grid; grid-template-columns: repeat(7, 1fr); row-gap: 2px; }
+  .mini-day-cell {
+    text-align: center; font-size: 12px; color: #191F28;
+    aspect-ratio: 1; display: flex; align-items: center; justify-content: center;
+    border-radius: 50%; margin: 0 auto; width: 26px;
   }
-  .phase-pill.active[data-phase="study"]{background:#EAF1FF; border-color:#2F6FED; color:#2F6FED;}
-  .phase-pill.active[data-phase="ops"]{background:var(--orange-tint); border-color:var(--orange); color:var(--orange-deep);}
-  .phase-pill.active[data-phase="ceo"]{background:#FFF8E1; border-color:#B8860B; color:#8B6914;}
+  .mini-day-cell.out { color: #D5D9DE; }
+  .mini-day-cell.today { background: #FC9600; color: #fff; font-weight: 700; }
+  .mini-day-cell.sun { color: #F04452; }
+  .mini-day-cell.sat { color: #3182F6; }
+  .mini-day-cell.out.sun, .mini-day-cell.out.sat { color: #F4D9DA; }
 
-  .phase-filter{display:flex; gap:6px; margin-bottom:14px; flex-wrap:wrap;}
-  .phase-filter-pill{
-    font-size:12px; font-weight:700; padding:7px 13px; border-radius:20px; cursor:pointer;
-    border:1px solid var(--line); background:var(--surface); color:var(--muted);
+  .memo-grid-wrap {
+    flex: 1;
+    min-width: 320px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    align-items: stretch;
   }
-  .phase-filter-pill.active{background:var(--navy); border-color:var(--navy); color:#fff;}
-
-  .entry-phase-tag{font-size:10px; font-weight:700; padding:2px 8px; border-radius:20px;}
-  .entry-phase-tag.study{background:#EAF1FF; color:#2F6FED;}
-  .entry-phase-tag.ops{background:var(--orange-tint); color:var(--orange-deep);}
-  .entry-phase-tag.ceo{background:#FFF8E1; color:#8B6914;}
-
-  .record-list{margin-top:6px;}
-  .empty-state{text-align:center; padding:40px 10px; color:var(--faint); font-size:13px;}
-
-  /* ---------- shared card/composer bits ---------- */
-  .composer{background:var(--surface); border:1px solid var(--line); border-radius:var(--radius); padding:20px; margin-bottom:14px;}
-  .composer input[type="text"], .composer textarea{
-    width:100%; font-family:inherit; font-size:13.5px; border:1px solid var(--line); border-radius:8px;
-    padding:10px 12px; color:var(--ink); background:var(--bg); resize:vertical; margin-bottom:8px;
+  .memo-box { min-width: 0; }
+  .memo-label { font-size: 12px; font-weight: 700; color: #8B95A1; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
+  .memo-box textarea {
+    width: 100%; min-height: 140px; border: none; outline: none; resize: none; overflow: hidden;
+    font-size: 13px; line-height: 1.7; font-family: inherit; color: #191F28;
   }
-  .composer input:focus, .composer textarea:focus{outline:none; border-color:var(--orange);}
-  .entry-content-input{font-size:14px; line-height:1.7; min-height:150px;}
-  .composer-submit{
-    background:var(--navy); color:#fff; border:none; border-radius:8px; padding:9px 18px;
-    font-size:12.5px; font-weight:700; cursor:pointer; font-family:inherit; float:right;
+  .add-memo-btn {
+    min-height: 60px; cursor: pointer;
+    border: none; background: #fff; color: #8B95A1; font-size: 13px; font-weight: 700;
+    display: flex; align-items: center; justify-content: center;
   }
-  .composer::after{content:''; display:table; clear:both;}
+  .add-memo-btn:hover { color: #FC9600; }
+  .delete-memo-btn { border: none; background: none; color: #C3C9CF; cursor: pointer; font-size: 12px; padding: 0; }
+  .delete-memo-btn:hover { color: #F04452; }
 
-  .checkin-grid{display:grid; grid-template-columns:1fr 1fr; gap:10px 16px; margin-bottom:10px;}
-  @media (max-width:520px){.checkin-grid{grid-template-columns:1fr;}}
-  .checkin-item .ci-label{display:flex; justify-content:space-between; font-size:12px; margin-bottom:4px;}
-  .checkin-item .ci-label b{font-weight:700; display:inline-flex; align-items:center; gap:6px;}
-  .checkin-item .ci-label span{font-weight:700;}
-  .checkin-item input[type="range"]{width:100%;}
-  .ci-dot{width:7px; height:7px; border-radius:50%; flex:none;}
-
-  /* outcome (decision -> result) */
-  .outcome-toggle{
-    margin-top:8px; font-size:11.5px; font-weight:700; color:var(--muted); background:var(--bg);
-    border:1px dashed var(--line); border-radius:8px; padding:7px 12px; cursor:pointer;
-  }
-  .outcome-form{margin-top:10px; padding-top:10px; border-top:1px dashed var(--line);}
-  .outcome-result-row{display:flex; gap:6px; margin-bottom:8px;}
-  .outcome-result-row select{
-    font-family:inherit; font-size:12px; border:1px solid var(--line); border-radius:8px;
-    padding:6px 10px; background:var(--surface); color:var(--ink);
-  }
-  .outcome-input{width:100%; font-family:inherit; font-size:12.5px; border:1px solid var(--line); border-radius:8px; padding:8px 10px; margin-bottom:8px; resize:vertical; background:var(--bg);}
-  .outcome-save{background:var(--navy); color:#fff; border:none; border-radius:7px; padding:6px 14px; font-size:11.5px; font-weight:700; cursor:pointer; font-family:inherit;}
-  .outcome-cancel{background:none; border:none; color:var(--faint); font-size:11.5px; cursor:pointer; font-family:inherit; margin-left:6px;}
-  .outcome-block{margin-top:10px; padding:10px 12px; border-radius:8px;}
-  .outcome-block.positive{background:#EAF7EF;}
-  .outcome-block.neutral{background:#F2F3F5;}
-  .outcome-block.negative{background:#FDECEC;}
-  .outcome-tag{font-size:10px; font-weight:800; letter-spacing:.02em;}
-  .outcome-block.positive .outcome-tag{color:#1B8A4A;}
-  .outcome-block.neutral .outcome-tag{color:var(--muted);}
-  .outcome-block.negative .outcome-tag{color:#C22C31;}
-  .outcome-date{font-size:10.5px; color:var(--faint); margin-left:8px;}
-  .outcome-text{font-size:12.5px; color:var(--ink); margin-top:4px; white-space:pre-wrap;}
-
-  .entry-metric{
-    display:inline-block; margin-top:6px; font-size:11.5px; font-weight:700; color:var(--orange-deep);
-    background:var(--orange-tint); border-radius:6px; padding:4px 10px;
+  .todo-row { display: flex; align-items: flex-start; gap: 8px; margin-bottom: 6px; min-width: 0; cursor: grab; border-radius: 8px; padding: 2px 4px; margin-left: -4px; transition: background 0.12s ease, opacity 0.12s ease; }
+  .todo-row:hover { background: #F7F8FA; }
+  .todo-row.dragging { opacity: 0.35; }
+  .day-cell.drop-hover { background: #FFF4E6 !important; box-shadow: inset 0 0 0 2px #FC9600; }
+  .todo-text { font-size: 13px; flex: 1; min-width: 0; word-break: break-word; white-space: pre-wrap; line-height: 1.6; padding-top: 1px; }
+  .todo-text.done { text-decoration: line-through; color: #B0B8C1; }
+  .icon-btn { border: none; background: none; cursor: pointer; padding: 0; flex-shrink: 0; font-size: 12px; color: #C3C9CF; transition: color 0.15s ease; }
+  .icon-btn:hover { color: #6B7684; }
+  .rollover-btn { color: #FC9600; font-size: 14px; }
+  .rollover-btn:hover { color: #E08600; }
+  input.move-date {
+    border: none; background: #F2F4F6; border-radius: 6px; font-size: 10px; color: #6B7684;
+    padding: 2px 4px; flex-shrink: 0; width: 84px; cursor: pointer;
   }
 
-  /* attachments */
-  .attach-input-btn{
-    display:inline-flex; align-items:center; gap:6px; font-size:11.5px; font-weight:700; color:var(--muted);
-    background:var(--bg); border:1px dashed var(--line); border-radius:8px; padding:7px 12px; cursor:pointer; margin-bottom:8px;
-  }
-  .attach-input-btn:hover{border-color:var(--orange); color:var(--orange-deep);}
-  .attach-staged{display:flex; gap:6px; flex-wrap:wrap; margin-bottom:8px;}
-  .attach-staged-chip{
-    display:inline-flex; align-items:center; gap:6px; font-size:11px; background:var(--orange-tint); color:var(--orange-deep);
-    border-radius:20px; padding:4px 8px 4px 10px;
-  }
-  .attach-staged-chip .rm{cursor:pointer; font-weight:800; opacity:.7;}
-  .attach-progress{font-size:11.5px; color:var(--faint); margin-bottom:8px;}
-
-  .entry-attachments{display:flex; flex-wrap:wrap; gap:8px; margin-top:10px;}
-  .attach-thumb{width:64px; height:64px; border-radius:8px; object-fit:cover; border:1px solid var(--line); cursor:pointer;}
-  .attach-file-chip{
-    display:flex; align-items:center; gap:8px; font-size:11.5px; background:var(--bg); border:1px solid var(--line);
-    border-radius:8px; padding:8px 10px; max-width:220px;
-  }
-  .attach-file-chip .af-icon{font-size:16px; flex:none;}
-  .attach-file-chip .af-name{flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font-weight:600; color:var(--ink);}
-  .attach-file-chip .af-size{font-size:10px; color:var(--faint);}
-  .attach-file-chip .af-dl{color:var(--orange-deep); font-weight:800; cursor:pointer; flex:none;}
-  .attach-del{position:relative; margin-left:-6px;}
-  .attach-del-btn{
-    position:absolute; top:-6px; right:-6px; width:16px; height:16px; border-radius:50%; background:var(--navy);
-    color:#fff; font-size:10px; display:flex; align-items:center; justify-content:center; cursor:pointer; border:none;
-  }
-  .entry-attach-add{margin-top:8px; font-size:11px; font-weight:700; color:var(--faint); background:none; border:1px dashed var(--line); border-radius:7px; padding:5px 10px; cursor:pointer; font-family:inherit;}
-
-  .entry{background:var(--surface); border:1px solid var(--line); border-left:4px solid var(--faint); border-radius:10px; padding:16px 18px; margin-bottom:10px; position:relative;}
-  .entry-top{display:flex; justify-content:space-between; align-items:flex-start; gap:10px; margin-bottom:4px;}
-  .entry-meta{display:flex; align-items:center; gap:8px; flex-wrap:wrap;}
-  .entry-tag{font-size:10px; font-weight:800; letter-spacing:.03em; padding:2px 8px; border-radius:20px;}
-  .entry-tag.journal, .entry-tag.milestone, .entry-tag.decision{background:#EEF0F3; color:var(--muted);}
-  .entry-tag.checkin{background:var(--teal-tint); color:var(--teal);}
-  .entry-tag.meeting{background:#EAF1FF; color:#2F6FED;}
-  .meeting-project-tag{font-size:10px; font-weight:700; padding:2px 8px; border-radius:20px; background:#F1EDFF; color:#7C5CFC;}
-  .entry-example-tag{font-size:10px; font-weight:700; padding:2px 8px; border-radius:20px; background:#EEF0F3; color:var(--faint);}
-  .entry-dom-tag{font-size:10px; font-weight:700; padding:2px 8px; border-radius:20px; background:#fff;}
-  .entry-date{font-size:11px; color:var(--faint); font-weight:600;}
-  .entry-del{background:none; border:none; color:var(--faint); font-size:16px; cursor:pointer; line-height:1;}
-  .entry-edit{background:none; border:none; color:var(--faint); font-size:13px; cursor:pointer; margin-right:8px;}
-  .entry-edit:hover{color:var(--orange-deep);}
-  .edit-title-input{
-    width:100%; font-family:inherit; font-size:14px; font-weight:700; border:1px solid var(--orange); border-radius:8px;
-    padding:8px 10px; color:var(--ink); background:var(--orange-tint); margin-bottom:6px;
-  }
-  .edit-content-input{
-    width:100%; font-family:inherit; font-size:12.8px; border:1px solid var(--line); border-radius:8px;
-    padding:8px 10px; color:var(--ink); background:var(--bg); resize:vertical; margin-bottom:6px;
-  }
-  .edit-title-input:focus, .edit-content-input:focus{outline:none; border-color:var(--orange);}
-  .edit-save{background:var(--navy); color:#fff; border:none; border-radius:7px; padding:6px 14px; font-size:11.5px; font-weight:700; cursor:pointer; font-family:inherit;}
-  .edit-cancel{background:none; border:none; color:var(--faint); font-size:11.5px; cursor:pointer; font-family:inherit; margin-left:6px;}
-  .entry-title{font-size:14px; font-weight:700; margin-bottom:4px;}
-  .entry-content{font-size:12.8px; color:var(--muted); white-space:pre-wrap;}
-  .entry-scores{display:flex; gap:10px; flex-wrap:wrap; margin-top:6px;}
-  .es{font-size:11px; color:var(--muted); background:var(--bg); border-radius:6px; padding:4px 8px;}
-  .es b{color:var(--ink);}
-
-  /* growth chart / snapshot (checkin view) */
-  .chart-card{background:var(--surface); border:1px solid var(--line); border-radius:var(--radius); padding:20px; margin-bottom:14px;}
-  .chart-empty{text-align:center; padding:26px 10px; color:var(--faint); font-size:13px;}
-  .chart-empty b{color:var(--muted); display:block; margin-bottom:4px; font-size:13.5px;}
-  #chart-svg{width:100%; height:auto; display:block;}
-  .chart-legend{display:flex; gap:14px; margin-top:10px; padding-top:10px; border-top:1px solid var(--line); font-size:11px; color:var(--muted); flex-wrap:wrap;}
-  .chart-legend span{display:inline-flex; align-items:center; gap:5px;}
-  .leg-dot{width:7px; height:7px; border-radius:50%;}
-
-  .snap-row{margin-bottom:12px;}
-  .snap-row:last-child{margin-bottom:0;}
-  .snap-top{display:flex; justify-content:space-between; font-size:12.5px; margin-bottom:5px;}
-  .snap-top b{font-weight:700;}
-  .snap-track{height:7px; background:#EEF0F3; border-radius:4px; overflow:hidden;}
-  .snap-fill{height:100%; border-radius:4px;}
-  .snap-row.weak{background:#FDECEC; margin:0 -12px 12px; padding:8px 12px; border-radius:8px;}
-  .weak-tag{font-size:10px; font-weight:800; color:#C22C31; background:#fff; border-radius:20px; padding:1px 7px; margin-left:6px;}
-
-  /* meeting notes */
-  .project-select{
-    width:100%; font-family:inherit; font-size:13px; border:1px solid var(--line); border-radius:8px;
-    padding:9px 12px; margin-bottom:8px; background:var(--bg); color:var(--ink);
-  }
-  .project-select:focus{outline:none; border-color:var(--orange);}
-  .action-add-row{display:flex; gap:6px; margin-bottom:8px;}
-  .action-add-row input{
-    flex:1; font-family:inherit; font-size:12.5px; border:1px solid var(--line); border-radius:8px;
-    padding:8px 10px; background:var(--bg); color:var(--ink);
-  }
-  .action-add-row input:focus{outline:none; border-color:var(--orange);}
-  .action-add-btn{flex:none; background:var(--navy); color:#fff; border:none; border-radius:7px; padding:0 14px; font-size:12px; font-weight:700; cursor:pointer; font-family:inherit;}
-  .staged-action-list{display:flex; flex-direction:column; gap:5px; margin-bottom:8px;}
-  .staged-action-item{display:flex; align-items:center; justify-content:space-between; gap:8px; font-size:12px; background:var(--bg); border-radius:7px; padding:6px 10px;}
-  .staged-action-item .rm{cursor:pointer; color:var(--faint); font-weight:800;}
-  .action-item-list{margin-top:10px; display:flex; flex-direction:column; gap:6px;}
-  .action-item-row{display:flex; align-items:center; gap:8px; font-size:12.5px; background:var(--bg); border-radius:8px; padding:7px 10px;}
-  .action-item-row input[type="checkbox"]{flex:none; width:15px; height:15px; accent-color:var(--orange); cursor:pointer;}
-  .action-item-row .ai-text{flex:1;}
-  .action-item-row.done .ai-text{color:var(--faint); text-decoration:line-through;}
-  .action-item-row .ai-del{flex:none; background:none; border:none; color:var(--faint); font-size:14px; cursor:pointer;}
-  .action-item-add-inline{display:flex; gap:6px; margin-top:8px;}
-  .action-item-add-inline input{
-    flex:1; font-family:inherit; font-size:12px; border:1px dashed var(--line); border-radius:7px;
-    padding:6px 9px; background:var(--surface); color:var(--ink);
-  }
-  .action-item-add-inline input:focus{outline:none; border-color:var(--orange);}
-  .action-item-add-inline button{flex:none; background:none; border:1px dashed var(--line); border-radius:7px; padding:6px 12px; font-size:11.5px; font-weight:700; color:var(--muted); cursor:pointer; font-family:inherit;}
-
-  /* project category management */
-  .project-manage-toggle{
-    display:inline-block; font-size:11.5px; font-weight:700; color:var(--muted); background:none; border:none;
-    cursor:pointer; padding:0; margin:-4px 0 10px; font-family:inherit; text-decoration:underline;
-  }
-  .project-manage-toggle:hover{color:var(--orange-deep);}
-  .project-manage-panel{background:var(--bg); border:1px solid var(--line); border-radius:10px; padding:12px; margin-bottom:10px;}
-  .project-manage-row{display:flex; align-items:center; gap:6px; margin-bottom:6px;}
-  .project-manage-row:last-child{margin-bottom:0;}
-  .project-manage-name{
-    flex:1; font-family:inherit; font-size:12.5px; border:1px solid var(--line); border-radius:7px;
-    padding:7px 10px; background:var(--surface); color:var(--ink);
-  }
-  .project-manage-name:focus{outline:none; border-color:var(--orange);}
-  .project-manage-del{flex:none; background:none; border:none; color:var(--faint); font-size:16px; cursor:pointer; line-height:1; padding:0 2px;}
-  .project-manage-del:hover{color:#E5484D;}
-  .project-manage-add-row{display:flex; gap:6px; margin-top:10px; padding-top:10px; border-top:1px dashed var(--line);}
-  .project-manage-add-row input{
-    flex:1; font-family:inherit; font-size:12.5px; border:1px dashed var(--line); border-radius:7px;
-    padding:7px 10px; background:var(--surface); color:var(--ink);
-  }
-  .project-manage-add-row input:focus{outline:none; border-color:var(--orange);}
-  .project-manage-add-btn{flex:none; background:var(--navy); color:#fff; border:none; border-radius:7px; padding:0 14px; font-size:12px; font-weight:700; cursor:pointer; font-family:inherit;}
-
-  @media (max-width:760px){
-    .workspace{flex-direction:column;}
-    .sidebar{
-      width:100%; position:static; flex-direction:row; flex-wrap:nowrap;
-      overflow-x:auto; -webkit-overflow-scrolling:touch; gap:8px;
-      padding-bottom:8px; margin-bottom:4px;
-    }
-    .sidebar-label{display:none;}
-    .side-item{flex:none; white-space:nowrap;}
-    .side-divider{display:none;}
+  input[type="checkbox"] {
+    accent-color: #FC9600;
+    width: 18px; height: 18px;
+    border-radius: 6px;
+    cursor: pointer;
+    flex-shrink: 0;
   }
 
-  footer{max-width:1600px; margin:30px auto 0; padding:18px 40px 0; border-top:1px solid var(--line); font-size:11px; color:var(--faint); display:flex; justify-content:space-between; flex-wrap:wrap; gap:8px;}
-  #reset-all{background:none; border:none; color:var(--faint); font-size:11px; text-decoration:underline; cursor:pointer; font-family:inherit;}
+  input.boxed, textarea.boxed {
+    border: none; border-radius: 10px; padding: 8px 10px; background: transparent;
+    margin-top: 6px; width: 100%; outline: none; font-size: 13px; font-family: inherit;
+    color: #191F28; transition: box-shadow 0.15s ease, background 0.15s ease;
+  }
+  input.boxed::placeholder, textarea.boxed::placeholder { color: #C3C9CF; }
+  input.boxed:hover, textarea.boxed:hover { background: #F9FAFB; }
+  input.boxed:focus, textarea.boxed:focus { background: #fff; box-shadow: 0 0 0 2px #FFD9A0; }
+
+  .journal-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+  .title { font-size: 20px; font-weight: 700; }
+  .subtitle { font-size: 12px; color: #8B95A1; margin-top: 4px; }
+  .btn {
+    padding: 10px 16px; border-radius: 12px; border: none; background: #FC9600; color: #fff;
+    font-size: 13px; font-weight: 700; cursor: pointer; transition: transform 0.1s ease, opacity 0.15s ease;
+  }
+  .btn:active { transform: scale(0.97); }
+  .btn.ghost { background: #fff; color: #6B7684; box-shadow: 0 1px 2px rgba(25,31,40,0.03), 0 2px 8px rgba(25,31,40,0.04); }
+  .btn.ghost:hover { color: #191F28; }
+  .error {
+    color: #F04452; font-size: 12px; margin-bottom: 12px; background: #FFEDEE;
+    padding: 10px 14px; border-radius: 10px;
+  }
+
+  .table-wrap {
+    background: #fff; border-radius: 20px; overflow: hidden;
+    box-shadow: 0 1px 2px rgba(25,31,40,0.03), 0 4px 14px rgba(25,31,40,0.04);
+    overflow-x: auto; flex: 1; min-width: 0;
+  }
+  .grid { display: grid; align-items: stretch; }
+  .cell { border-right: 1px solid #F2F4F6; border-bottom: 1px solid #F2F4F6; padding: 12px 14px; overflow: hidden; min-width: 0; }
+  .journal-grid textarea {
+    width: 100%; border: none; outline: none; resize: none; overflow: hidden;
+    font-size: 13px; color: #191F28; font-family: inherit; background: transparent; line-height: 1.7; display: block;
+  }
+  .week-label { font-size: 14px; font-weight: 700; }
+  .progress-badge {
+    font-size: 11px; font-weight: 700; white-space: nowrap; flex-shrink: 0;
+    padding: 3px 9px; border-radius: 100px; background: #FFF4E6;
+  }
+  .day-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+  .day-date-label { font-size: 12px; color: #8B95A1; font-weight: 500; }
+  .day-date-label.today { color: #FC9600; font-weight: 700; }
 </style>
 </head>
 <body>
 
-<div id="login-screen">
-  <div class="login-card">
-    <h2>권혜영 워크스페이스</h2>
-    <p>본인 계정으로만 접근 가능합니다.</p>
-    <form id="login-form">
-      <input type="email" id="login-email" placeholder="이메일" autocomplete="username" required>
-      <input type="password" id="login-password" placeholder="비밀번호" autocomplete="current-password" required>
-      <button type="submit" id="login-submit">로그인</button>
-      <div class="login-error" id="login-error"></div>
-    </form>
+<div class="top-row">
+  <div class="panel mini-cal">
+    <div class="mini-cal-header">
+      <button class="mini-nav-btn" onclick="MiniCal.prevMonth()">‹</button>
+      <div class="mini-cal-title" id="miniCalTitle"></div>
+      <button class="mini-nav-btn" onclick="MiniCal.nextMonth()">›</button>
+    </div>
+    <div class="mini-weekday-row">
+      <div class="mini-weekday-cell sun">일</div>
+      <div class="mini-weekday-cell">월</div>
+      <div class="mini-weekday-cell">화</div>
+      <div class="mini-weekday-cell">수</div>
+      <div class="mini-weekday-cell">목</div>
+      <div class="mini-weekday-cell">금</div>
+      <div class="mini-weekday-cell sat">토</div>
+    </div>
+    <div class="mini-day-grid" id="miniDayGrid"></div>
+  </div>
+
+  <div class="memo-grid-wrap">
+    <div id="memoRow" style="display:contents;"></div>
+    <button class="panel add-memo-btn" onclick="QuickMemos.addMemo()">+ 메모 추가</button>
   </div>
 </div>
 
-<div id="app-root">
-
-<div class="hero">
-  <div class="wrap">
-    <div class="hero-top">
-      <div>
-        <div class="eyebrow">Career Journey Log</div>
-        <h1>권혜영 워크스페이스</h1>
-        <p class="os-tag">경영자가 되기 위한 개인 운영체계(OS)</p>
-      </div>
-      <button class="logout-btn" id="logout-btn">로그아웃</button>
-    </div>
-    <p class="sub">브랜드팀장에서 경영자로 — 공부·역량확장·운영여정을 기록하고, 성장을 데이터화한다.</p>
-    <div class="goal-badge">
-      <span class="g-label">GOAL</span>
-      <span class="g-text"><span class="strike">브랜드를 만드는 사람</span>을 넘어, 브랜드를 지속적으로 성장시키는 경영자</span>
-    </div>
-    <div class="stat-row">
-      <div class="stat"><div class="v" id="stat-total">0</div><div class="l">총 기록</div></div>
-      <div class="stat"><div class="v" id="stat-days">0<span>일</span></div><div class="l">기록 시작 후</div></div>
-      <div class="stat"><div class="v" id="stat-checkins">0</div><div class="l">역량 체크인 횟수</div></div>
-      <div class="stat"><div class="v pos" id="stat-growth">–</div><div class="l">첫 체크인 대비 성장</div></div>
-    </div>
+<div class="journal-header">
+  <div>
+    <div class="title" id="journalTitle">업무일지</div>
+    <div class="subtitle">달력에서 월을 이동하면 그 달의 주차가 자동으로 생성됩니다</div>
+  </div>
+  <div style="display:flex; gap:6px;">
+    <button class="nav-btn-lg" onclick="MiniCal.prevMonth()">‹</button>
+    <button class="nav-btn-lg" onclick="MiniCal.nextMonth()">›</button>
   </div>
 </div>
 
-<div class="wrap">
-  <div class="workspace">
-    <aside class="sidebar" id="sidebar"></aside>
-    <main class="panel" id="panel"></main>
+<div id="journalError" class="error" style="display:none;"></div>
+
+<div style="display:flex; gap:16px; align-items:flex-start;">
+  <div class="table-wrap">
+    <div id="grid" class="grid journal-grid"></div>
   </div>
 </div>
 
-<footer>
-  <span>권혜영 워크스페이스 · Firebase 저장 · 본인 계정으로만 접근 가능</span>
-  <span>
-    <button id="load-example" style="background:none; border:none; color:var(--orange-deep); font-size:11px; text-decoration:underline; cursor:pointer; font-family:inherit; margin-right:14px;">예시로 채워보기</button>
-    <button id="clear-example" style="background:none; border:none; color:var(--faint); font-size:11px; text-decoration:underline; cursor:pointer; font-family:inherit; margin-right:14px;">예시만 지우기</button>
-    <button id="reset-all">전체 초기화</button>
-  </span>
-</footer>
-
-</div>
-
-<script type="module">
-/* ===================== FIREBASE ===================== */
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-app.js";
-import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-auth.js";
-import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js";
-import { getStorage, ref, uploadString, getDownloadURL, deleteObject, listAll } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-storage.js";
-
-const firebaseConfig = {
-  apiKey: "AIzaSyD1e1RuI7PGWWahCeyxJ_rny4LKf18mLn8",
-  authDomain: "hyeyoung-os.firebaseapp.com",
-  projectId: "hyeyoung-os",
-  storageBucket: "hyeyoung-os.firebasestorage.app",
-  messagingSenderId: "1096722918453",
-  appId: "1:1096722918453:web:8e116c5f583431a095157c"
-};
-const fbApp = initializeApp(firebaseConfig);
-const auth = getAuth(fbApp);
-const db = getFirestore(fbApp);
-const storageInst = getStorage(fbApp);
-
-function userDocRef(){ return doc(db, 'users', auth.currentUser.uid); }
-function attachmentPath(id){ return `attachments/${auth.currentUser.uid}/${id}`; }
-
-document.getElementById('login-form').addEventListener('submit', async (e)=>{
-  e.preventDefault();
-  const email = document.getElementById('login-email').value.trim();
-  const pw = document.getElementById('login-password').value;
-  const errEl = document.getElementById('login-error');
-  const submitBtn = document.getElementById('login-submit');
-  errEl.textContent = '';
-  submitBtn.disabled = true;
-  submitBtn.textContent = '로그인 중...';
-  try{
-    await signInWithEmailAndPassword(auth, email, pw);
-  }catch(err){
-    errEl.textContent = '로그인 실패: 이메일 또는 비밀번호를 확인해주세요.';
-  }
-  submitBtn.disabled = false;
-  submitBtn.textContent = '로그인';
-});
-document.getElementById('logout-btn').addEventListener('click', ()=> signOut(auth));
-
-onAuthStateChanged(auth, async (user)=>{
-  if(user){
-    document.getElementById('login-screen').style.display = 'none';
-    document.getElementById('app-root').style.display = 'block';
-    await bootApp();
-  } else {
-    document.getElementById('login-screen').style.display = 'flex';
-    document.getElementById('app-root').style.display = 'none';
-  }
-});
-
-/* ===================== DATA ===================== */
-const CATEGORIES = [
-  {id:'fin', label:'재무적 사고력', short:'재무', color:'#2F6FED', tint:'#EAF1FF', desc:'손익·현금흐름·원가구조 — 이게 돈이 되는가'},
-  {id:'strategic', label:'전략적 판단력', short:'전략', color:'#FC9600', tint:'#FFF1DD', desc:'무엇에 집중하고 무엇을 버릴지'},
-  {id:'org', label:'조직 설계력', short:'조직', color:'#7C5CFC', tint:'#F1EDFF', desc:'본인 없이도 돌아가는 시스템'},
-  {id:'decision', label:'불확실성 하 의사결정력', short:'결정', color:'#E5484D', tint:'#FDECEC', desc:'정답 없는 문제를 풀고 책임지는 능력'},
-  {id:'comm', label:'커뮤니케이션·영향력', short:'영향력', color:'#0EA5A5', tint:'#E4F7F7', desc:'서로 다른 언어를 하나의 방향으로'},
-  {id:'risk', label:'리스크 관리 감각', short:'리스크', color:'#B45309', tint:'#FBF1E6', desc:'감수할 리스크와 피할 리스크를 구분'},
-];
-const CAT_MAP = Object.fromEntries(CATEGORIES.map(c=>[c.id,c]));
-const TYPE_LABEL = {journal:'기록', milestone:'기록', decision:'기록', checkin:'역량 체크인', meeting:'회의록'};
-const PHASE_LABEL = {study:'📖 공부·역량확장', ops:'🛠 운영여정·결과', ceo:'👑 대표님 조언'};
-
-const DEFAULT_PROJECTS = [
-  {id:'pour_method', label:'POUR공법'},
-  {id:'pour_solution', label:'POUR솔루션'},
-  {id:'apt_square', label:'아파트스퀘어'},
-  {id:'ollynew', label:'올리뉴'},
-  {id:'pour_store', label:'POUR스토어'},
-  {id:'growhome', label:'그로홈'},
-  {id:'netform', label:'넷폼알앤디(전사)'},
-  {id:'personal', label:'개인 브랜드(비유·틈)'},
-  {id:'etc', label:'기타'},
-];
-let projects = [];      // 사용자가 추가/수정/삭제 가능한 카테고리 목록 (Firestore에 저장)
-let projectMap = {};
-function rebuildProjectMap(){ projectMap = Object.fromEntries(projects.map(p=>[p.id,p])); }
-
-const DOMAINS = [
-  {id:'brand_mkt', label:'브랜드 전략 및 마케팅', short:'브랜드·마케팅', icon:'🎯', color:'#FC9600', desc:'카테고리 설계, 포지셔닝, 메시징, 퍼포먼스, 콘텐츠, CRM, 그로스'},
-  {id:'finance', label:'재무회계', short:'재무회계', icon:'💰', color:'#2F6FED', desc:'예산, 손익, 현금흐름, 투자 의사결정 — 숫자로 사업의 건강 상태를 읽는 능력'},
-  {id:'org', label:'조직운영', short:'조직운영', icon:'🧩', color:'#7C5CFC', desc:'채용, OKR, SOP, 프로젝트 관리 — 본인 없이도 돌아가는 시스템을 만드는 능력'},
-  {id:'strategic', label:'전략적 판단력', short:'전략적 판단력', icon:'🧭', color:'#D6336C', desc:'무엇에 집중하고 무엇을 버릴지 결정하는 능력'},
-  {id:'ai', label:'AI경영', short:'AI경영', icon:'🤖', color:'#131A2B', desc:'AI 에이전트, 자동화, 데이터 기반 의사결정'},
-  {id:'comm', label:'커뮤니케이션·영향력', short:'커뮤니케이션', icon:'🗣️', color:'#0EA5A5', desc:'이해관계자를 하나의 방향으로 설득하는 능력'},
-  {id:'risk', label:'리스크 관리', short:'리스크 관리', icon:'⚠️', color:'#B45309', desc:'감수할 리스크와 피할 리스크를 구분하는 감각'},
-];
-const DOM_MAP = Object.fromEntries(DOMAINS.map(d=>[d.id,d]));
-
-const EXAMPLE_ENTRIES = [
-  {id:'ex1001', date:'2026.01.13', ts:new Date('2026-01-13').getTime(), type:'journal', title:'오늘 처음으로 숫자가 다르게 보였다',
-   content:'회의에서 대표가 원가율 얘기를 하는데, 예전엔 흘려들었을 텐데 오늘은 그게 무슨 뜻인지 계산이 됐다. 관리회계 공부 효과가 처음으로 실감났다.',
-   domain:'finance', phase:'study', isExample:true},
-  {id:'ex1002', date:'2026.02.03', ts:new Date('2026-02-03').getTime(), type:'milestone', title:'POUR솔루션 공헌이익률 첫 계산 완료',
-   content:'계약금액, 원가, 광고비, 영업비를 직접 분해해서 공헌이익률을 처음 계산해봤다. 기존엔 매출만 봤는데 이제 뭐가 남는 장사인지 구분이 된다.',
-   domain:'finance', metric:'공헌이익률 34% 확인', phase:'ops', isExample:true},
-  {id:'ex1003', date:'2026.02.20', ts:new Date('2026-02-20').getTime(), type:'decision', title:'아파트스퀘어 광고 예산 20% 축소 결정',
-   content:'문의 수는 꾸준한데 계약전환율이 3개월째 떨어지고 있음. 조회수보다 전환에 문제가 있다고 판단해서, 광고비를 줄이고 랜딩페이지·영업 프로세스 개선에 그 예산을 돌리기로 함.',
-   domain:'strategic', phase:'ops',
-   outcome:{date:'2026.05.15', text:'예산을 줄였는데도 계약 수는 유지됐고, 절감한 예산을 랜딩페이지 개선에 써서 전환율이 오히려 1.4%p 올랐다.', result:'positive'},
-   isExample:true},
-  {id:'ex1004', date:'2026.03.01', ts:new Date('2026-03-01').getTime(), type:'checkin', title:'1분기 첫 자가진단',
-   content:'회계 공부는 시작했지만 아직 실전 판단 경험이 부족하다고 느낌. 조직 위임은 팀장으로서 어느 정도 하고 있어서 상대적으로 높게 줬다.',
-   scores:{fin:2, strategic:3, org:3, decision:2, comm:3, risk:2}, isExample:true},
-  {id:'ex1005', date:'2026.03.18', ts:new Date('2026-03-18').getTime(), type:'journal', title:'AI 자동화로 리포트 시간을 줄였다',
-   content:'매주 반복하던 KPI 취합 작업을 자동화 스크립트로 돌려봤다. 처음엔 어색했는데, 이게 조직을 설계하는 것과 비슷한 감각이라는 걸 느꼈다.',
-   domain:'ai', phase:'ops', isExample:true},
-  {id:'ex1006', date:'2026.04.02', ts:new Date('2026-04-02').getTime(), type:'meeting', title:'미디어마케팅팀 온보딩 문서 회의',
-   content:'기존 역할설명서 형태의 온보딩 문서를 실무 매뉴얼로 재구성하기로 함. 촬영지원·NAS/카메라 관리 프로세스부터 먼저 정리하기로 결정.',
-   project:'netform',
-   actionItems:[
-     {id:'exa1001', text:'촬영지원 프로세스 초안 작성', done:false},
-     {id:'exa1002', text:'허지은 본부장님께 목차 공유', done:true},
-   ], isExample:true},
-];
-
-/* ===================== STATE ===================== */
-let entries = [];
-let currentView = 'all'; // 'all' | domain id | 'checkin' | 'meeting'
-let phaseFilter = 'all'; // 'all' | 'study' | 'ops'
-let selectedPhase = 'study'; // for composer: 'study' | 'ops'
-let meetingProjectFilter = 'all'; // 'all' | project id
-let projectManageOpen = false;
-
-let outcomeEditing = new Set();
-let editingEntries = new Set();
-let stagedFiles = [];
-let stagedActionItems = [];
-let attachmentCache = {}; // id -> download URL
-
-const MAX_FILE_BYTES = 4 * 1024 * 1024;
-const MAX_IMAGE_DIM = 1400;
-
-/* ===================== STORAGE (Firestore + Firebase Storage) ===================== */
-async function loadEntries(){
-  try{
-    const snap = await getDoc(userDocRef());
-    entries = (snap.exists() && snap.data().entries) ? snap.data().entries : [];
-  }catch(e){ entries = []; console.error('load failed', e); }
-}
-async function saveEntries(){
-  try{ await setDoc(userDocRef(), {entries}, {merge:true}); }
-  catch(e){ console.error('save failed', e); }
-}
-async function loadProjects(){
-  try{
-    const snap = await getDoc(userDocRef());
-    const saved = (snap.exists() && snap.data().projects) ? snap.data().projects : null;
-    projects = (saved && saved.length) ? saved : DEFAULT_PROJECTS.map(p=>({...p}));
-  }catch(e){ projects = DEFAULT_PROJECTS.map(p=>({...p})); console.error('load projects failed', e); }
-  rebuildProjectMap();
-}
-async function saveProjects(){
-  try{ await setDoc(userDocRef(), {projects}, {merge:true}); }
-  catch(e){ console.error('save projects failed', e); }
-}
-async function loadAttachmentCache(){
-  try{
-    const folderRef = ref(storageInst, `attachments/${auth.currentUser.uid}`);
-    const res = await listAll(folderRef);
-    for(const item of res.items){
-      try{ attachmentCache[item.name] = await getDownloadURL(item); }catch(e){}
-    }
-  }catch(e){ /* 폴더가 아직 없으면 여기로 옴 - 정상 */ }
-}
-async function uploadAttachment(id, dataUrl){
-  const r = ref(storageInst, attachmentPath(id));
-  await uploadString(r, dataUrl, 'data_url');
-  const url = await getDownloadURL(r);
-  attachmentCache[id] = url;
-  return url;
-}
-async function deleteAttachmentFile(id){
-  try{ await deleteObject(ref(storageInst, attachmentPath(id))); }catch(e){}
-  delete attachmentCache[id];
-}
-
-/* ===================== UTIL ===================== */
-function todayStr(){
+<script>
+function pad(n) { return String(n).padStart(2, "0"); }
+function toDateStr(y, m, d) { return `${y}-${pad(m + 1)}-${pad(d)}`; }
+function todayStr() {
   const d = new Date();
-  return `${d.getFullYear()}.${String(d.getMonth()+1).padStart(2,'0')}.${String(d.getDate()).padStart(2,'0')}`;
+  return toDateStr(d.getFullYear(), d.getMonth(), d.getDate());
 }
-function formatSize(bytes){
-  if(bytes < 1024) return bytes + 'B';
-  if(bytes < 1024*1024) return (bytes/1024).toFixed(0) + 'KB';
-  return (bytes/1024/1024).toFixed(1) + 'MB';
+function toMD(dateStr) {
+  const d = new Date(dateStr);
+  return `${d.getMonth() + 1}/${d.getDate()}`;
 }
-function escapeHtml(s){
-  const d = document.createElement('div');
-  d.textContent = s;
-  return d.innerHTML;
+function escapeHtml(str) {
+  return String(str || "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 }
-function escapeHtmlAttr(s){
-  return String(s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/'/g,'&#39;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-}
-function avgScore(scores){
-  const vals = CATEGORIES.map(c=>scores[c.id]).filter(v=>typeof v === 'number');
-  return vals.reduce((a,b)=>a+b,0)/vals.length;
-}
-async function triggerDownload(url, filename){
-  try{
-    const res = await fetch(url);
-    const blob = await res.blob();
-    const objUrl = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = objUrl; a.download = filename;
-    document.body.appendChild(a); a.click(); document.body.removeChild(a);
-    URL.revokeObjectURL(objUrl);
-  }catch(e){ window.open(url, '_blank'); }
-}
-function readFileAsDataURL(file){
-  return new Promise((resolve, reject)=>{
-    const r = new FileReader();
-    r.onload = () => resolve(r.result);
-    r.onerror = () => reject(new Error('read failed'));
-    r.readAsDataURL(file);
-  });
-}
-async function compressImageIfNeeded(file, dataUrl){
-  if(!file.type.startsWith('image/')) return dataUrl;
-  return new Promise((resolve)=>{
-    const img = new Image();
-    img.onload = () => {
-      let {width, height} = img;
-      if(width <= MAX_IMAGE_DIM && height <= MAX_IMAGE_DIM && file.size < 1.5*1024*1024){ resolve(dataUrl); return; }
-      const scale = Math.min(1, MAX_IMAGE_DIM / Math.max(width, height));
-      const canvas = document.createElement('canvas');
-      canvas.width = Math.round(width*scale); canvas.height = Math.round(height*scale);
-      canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
-      resolve(canvas.toDataURL('image/jpeg', 0.82));
-    };
-    img.onerror = () => resolve(dataUrl);
-    img.src = dataUrl;
-  });
-}
-function newId(){ return 'id' + Date.now() + Math.floor(Math.random()*100000); }
+let idCounter = 0;
+function newId() { idCounter += 1; return `${Date.now()}_${idCounter}`; }
 
-/* ===================== SIDEBAR ===================== */
-function selectView(id){
-  currentView = id;
-  phaseFilter = 'all';
-  meetingProjectFilter = 'all';
-  projectManageOpen = false;
-  stagedFiles = [];
-  stagedActionItems = [];
-  renderSidebar();
-  renderPanel();
-}
+/* ============================================================
+   MiniCal — month navigator (drives Journal's visible weeks)
+   ============================================================ */
+const MiniCal = {
+  viewYear: 0,
+  viewMonth: 0,
+  today: todayStr(),
 
-function renderSidebar(){
-  const el = document.getElementById('sidebar');
-  const allCount = entries.filter(e=>e.type!=='checkin' && e.type!=='meeting').length;
-  const checkinCount = entries.filter(e=>e.type==='checkin').length;
-  const meetingCount = entries.filter(e=>e.type==='meeting').length;
+  init() {
+    const now = new Date();
+    this.viewYear = now.getFullYear();
+    this.viewMonth = now.getMonth();
+    this.render();
+  },
+  prevMonth() {
+    this.viewMonth -= 1;
+    if (this.viewMonth < 0) { this.viewMonth = 11; this.viewYear -= 1; }
+    this.render();
+    if (typeof Journal !== "undefined") Journal.render();
+  },
+  nextMonth() {
+    this.viewMonth += 1;
+    if (this.viewMonth > 11) { this.viewMonth = 0; this.viewYear += 1; }
+    this.render();
+    if (typeof Journal !== "undefined") Journal.render();
+  },
+  render() {
+    document.getElementById("miniCalTitle").textContent = `${this.viewYear}.${pad(this.viewMonth + 1)}`;
+    const firstDay = new Date(this.viewYear, this.viewMonth, 1);
+    const startWeekday = firstDay.getDay();
+    const daysInMonth = new Date(this.viewYear, this.viewMonth + 1, 0).getDate();
+    const daysInPrevMonth = new Date(this.viewYear, this.viewMonth, 0).getDate();
 
-  const rows = [];
-  rows.push(sideRow('all', '📚', '전체 기록', allCount, '#131A2B'));
-  rows.push('<div class="sidebar-label">학습영역</div>');
-  DOMAINS.forEach(d=>{
-    const count = entries.filter(e=>e.type!=='checkin' && e.type!=='meeting' && e.domain===d.id).length;
-    rows.push(sideRow(d.id, d.icon, d.short, count, d.color));
-  });
-  rows.push('<div class="side-divider"></div>');
-  rows.push(sideRow('meeting', '🗓', '회의록', meetingCount, '#2F6FED'));
-  rows.push(sideRow('checkin', '📊', '역량 체크인', checkinCount, '#0EA5A5'));
-
-  el.innerHTML = rows.join('');
-  el.querySelectorAll('.side-item').forEach(item=>{
-    item.addEventListener('click', ()=> selectView(item.dataset.view));
-  });
-}
-function sideRow(id, icon, label, count, color){
-  const active = currentView === id;
-  const style = active ? `background:${color}1A; border-color:${color}; color:${color};` : '';
-  return `<div class="side-item ${active?'active':''}" data-view="${id}" style="${style}">
-    <span class="side-icon">${icon}</span>
-    <span class="side-label" style="${active?'color:'+color:''}">${escapeHtmlAttr(label)}</span>
-    <span class="side-count">${count}</span>
-  </div>`;
-}
-
-/* ===================== PANEL ===================== */
-function renderPanel(){
-  const panel = document.getElementById('panel');
-  if(currentView === 'checkin'){
-    panel.innerHTML = checkinPanelHtml();
-    wireCheckinPanel();
-  } else if(currentView === 'meeting'){
-    panel.innerHTML = meetingPanelHtml();
-    wireMeetingPanel();
-  } else {
-    panel.innerHTML = recordPanelHtml();
-    wireRecordPanel();
-  }
-}
-
-function recordPanelHtml(){
-  const isAll = currentView === 'all';
-  const dom = isAll ? null : DOM_MAP[currentView];
-  const fullList = entries.filter(e => e.type!=='checkin' && e.type!=='meeting' && (isAll || e.domain===currentView));
-  const list = fullList.filter(e => phaseFilter==='all' || (e.phase||'study')===phaseFilter).sort((a,b)=>b.ts-a.ts);
-  const lastDate = fullList.length ? fullList.slice().sort((a,b)=>b.ts-a.ts)[0].date : '-';
-
-  const header = `
-    <div class="panel-header">
-      <div class="panel-breadcrumb">학습영역 ›</div>
-      <div class="panel-title">${isAll ? '📚 전체 기록' : dom.icon+' '+dom.label}</div>
-      ${dom ? `<div class="panel-desc">${escapeHtml(dom.desc)}</div>` : `<div class="panel-desc">모든 학습영역의 기록을 모아 시간순으로 보여준다. 실제 작성은 왼쪽에서 학습영역을 선택한 뒤 진행한다.</div>`}
-      <div class="panel-meta">기록 ${fullList.length}개 · 최근 ${lastDate}</div>
-    </div>`;
-
-  const phaseFilterBar = `
-    <div class="phase-filter" id="phase-filter">
-      ${phaseFilterPillHtml('all', '전체')}
-      ${phaseFilterPillHtml('study', '📖 공부·역량확장')}
-      ${phaseFilterPillHtml('ops', '🛠 운영여정·결과')}
-      ${phaseFilterPillHtml('ceo', '👑 대표님 조언')}
-    </div>`;
-
-  const composer = isAll ? '' : `
-    <div class="composer">
-      <input type="text" id="quick-add-input" placeholder="제목 (예: 처음으로 예산 재배분을 직접 결정했다)">
-      <div class="phase-pills" id="phase-pills">
-        ${phasePillHtml('study', '📖 공부·역량확장')}
-        ${phasePillHtml('ops', '🛠 운영여정·결과')}
-        ${phasePillHtml('ceo', '👑 대표님 조언')}
-      </div>
-      <textarea id="entry-content" class="entry-content-input" rows="8" placeholder="자세히 적어보세요 (선택)."></textarea>
-      <label class="attach-input-btn" for="file-input">📎 사진·파일 첨부</label>
-      <input type="file" id="file-input" multiple accept="image/*,.pdf,.doc,.docx,.xlsx,.pptx,.txt" style="display:none;">
-      <div class="attach-staged" id="attach-staged"></div>
-      <div class="attach-progress" id="attach-progress" style="display:none;"></div>
-      <button class="composer-submit" id="quick-add-btn">기록 추가</button>
-    </div>`;
-
-  const listHtml = list.length
-    ? `<div class="record-list" id="record-list">` + list.map(e => buildEntryCardHtml(e, {showDomainTag:isAll})).join('') + `</div>`
-    : `<div class="empty-state">${fullList.length ? '이 필터에 해당하는 기록이 없습니다.' : (isAll ? '아직 기록이 없습니다. 왼쪽에서 학습영역을 선택해 첫 기록을 남겨보세요.' : '아직 기록이 없습니다. 위에서 첫 기록을 남겨보세요.')}</div>`;
-
-  return header + phaseFilterBar + composer + listHtml;
-}
-
-function phaseFilterPillHtml(id, label){
-  const active = phaseFilter === id;
-  return `<div class="phase-filter-pill ${active?'active':''}" data-pf="${id}">${label}</div>`;
-}
-function phasePillHtml(id, label){
-  const active = selectedPhase === id;
-  return `<div class="phase-pill ${active?'active':''}" data-phase="${id}">${label}</div>`;
-}
-
-function checkinPanelHtml(){
-  const checkins = entries.filter(e=>e.type==='checkin').sort((a,b)=>b.ts-a.ts);
-  const header = `
-    <div class="panel-header">
-      <div class="panel-breadcrumb">학습영역 ›</div>
-      <div class="panel-title">📊 역량 체크인</div>
-      <div class="panel-desc">6가지 경영자 역량을 분기 1회 정도 자가진단한다. 점수가 쌓이면 성장 곡선으로 확인할 수 있다.</div>
-      <div class="panel-meta">체크인 ${checkins.length}회</div>
-    </div>`;
-
-  const chart = `<div class="chart-card" id="chart-card"></div>`;
-  const snapshot = `<div class="chart-card" id="snapshot-card"></div>`;
-
-  const form = `
-    <div class="composer">
-      <input type="text" id="checkin-title" placeholder="이번 체크인 한 줄 요약 (예: 3분기 자가진단)">
-      <div class="checkin-grid" id="checkin-grid"></div>
-      <textarea id="checkin-note" rows="4" placeholder="이번 점수를 이렇게 준 이유 (선택)"></textarea>
-      <button class="composer-submit" id="checkin-submit">체크인 저장</button>
-    </div>`;
-
-  const listHtml = checkins.length
-    ? `<div class="record-list" id="record-list">` + checkins.map(e => buildEntryCardHtml(e, {showDomainTag:false})).join('') + `</div>`
-    : `<div class="empty-state">아직 체크인 기록이 없습니다.</div>`;
-
-  return header + chart + snapshot + form + listHtml;
-}
-
-/* ===================== MEETING PANEL ===================== */
-function meetingFilterBarHtml(){
-  const fullList = entries.filter(e=>e.type==='meeting');
-  const usedProjectIds = [...new Set(fullList.map(e=>e.project).filter(Boolean))];
-  if(!usedProjectIds.length) return '';
-  return `<div class="phase-filter" id="meeting-filter">
-      <div class="phase-filter-pill ${meetingProjectFilter==='all'?'active':''}" data-pf="all">전체</div>
-      ${usedProjectIds.map(pid=>{
-        const p = projectMap[pid] || {label:pid};
-        return `<div class="phase-filter-pill ${meetingProjectFilter===pid?'active':''}" data-pf="${escapeHtmlAttr(pid)}">${escapeHtmlAttr(p.label)}</div>`;
-      }).join('')}
-    </div>`;
-}
-function wireMeetingFilterBar(){
-  const filterEl = document.getElementById('meeting-filter');
-  if(!filterEl) return;
-  filterEl.querySelectorAll('.phase-filter-pill').forEach(pill=>{
-    pill.addEventListener('click', ()=>{
-      meetingProjectFilter = pill.dataset.pf;
-      refreshMeetingFilterAndList();
-    });
-  });
-}
-function meetingRecordListHtml(){
-  const fullList = entries.filter(e=>e.type==='meeting');
-  const list = fullList
-    .filter(e=> meetingProjectFilter==='all' || e.project===meetingProjectFilter)
-    .sort((a,b)=>b.ts-a.ts);
-  return list.length
-    ? `<div class="record-list" id="record-list">` + list.map(e => buildEntryCardHtml(e, {showDomainTag:false})).join('') + `</div>`
-    : `<div class="empty-state">${fullList.length ? '이 필터에 해당하는 회의록이 없습니다.' : '아직 회의록이 없습니다. 위에서 첫 회의록을 남겨보세요.'}</div>`;
-}
-function refreshMeetingFilterAndList(){
-  const filterWrap = document.getElementById('meeting-filter-wrap');
-  const listWrap = document.getElementById('meeting-list-wrap');
-  if(filterWrap){ filterWrap.innerHTML = meetingFilterBarHtml(); wireMeetingFilterBar(); }
-  if(listWrap){ listWrap.innerHTML = meetingRecordListHtml(); wireCardHandlers(listWrap); }
-  const metaEl = document.getElementById('meeting-panel-meta');
-  if(metaEl){
-    const fullList = entries.filter(e=>e.type==='meeting');
-    const lastDate = fullList.length ? fullList.slice().sort((a,b)=>b.ts-a.ts)[0].date : '-';
-    metaEl.textContent = `회의록 ${fullList.length}건 · 최근 ${lastDate}`;
-  }
-}
-function projectManageListHtml(){
-  return projects.map(p => `
-    <div class="project-manage-row">
-      <input type="text" class="project-manage-name" data-id="${p.id}" value="${escapeHtmlAttr(p.label)}">
-      <button type="button" class="project-manage-del" data-id="${p.id}">×</button>
-    </div>
-  `).join('');
-}
-function refreshProjectSelect(preserveId){
-  const sel = document.getElementById('meeting-project-select');
-  if(!sel) return;
-  sel.innerHTML = projects.map(p=>`<option value="${p.id}">${escapeHtmlAttr(p.label)}</option>`).join('');
-  if(preserveId && projects.some(p=>p.id===preserveId)) sel.value = preserveId;
-}
-
-function meetingPanelHtml(){
-  const fullList = entries.filter(e=>e.type==='meeting');
-  const lastDate = fullList.length ? fullList.slice().sort((a,b)=>b.ts-a.ts)[0].date : '-';
-
-  const header = `
-    <div class="panel-header">
-      <div class="panel-breadcrumb">기록 ›</div>
-      <div class="panel-title">🗓 회의록</div>
-      <div class="panel-desc">여러 브랜드·프로젝트 회의 내용을 한곳에 모아 기록하고, 액션아이템으로 후속 조치를 관리한다.</div>
-      <div class="panel-meta" id="meeting-panel-meta">회의록 ${fullList.length}건 · 최근 ${lastDate}</div>
-    </div>`;
-
-  const filterBar = `<div id="meeting-filter-wrap">${meetingFilterBarHtml()}</div>`;
-
-  const composer = `
-    <div class="composer">
-      <input type="text" id="meeting-title-input" placeholder="회의 제목 (예: 미디어마케팅팀 온보딩 문서 회의)">
-      <select class="project-select" id="meeting-project-select">
-        ${projects.map(p=>`<option value="${p.id}">${escapeHtmlAttr(p.label)}</option>`).join('')}
-      </select>
-      <button type="button" class="project-manage-toggle" id="project-manage-toggle">🛠 카테고리 관리</button>
-      <div class="project-manage-panel" id="project-manage-panel" style="display:${projectManageOpen ? 'block' : 'none'};">
-        <div id="project-manage-list">${projectManageListHtml()}</div>
-        <div class="project-manage-add-row">
-          <input type="text" id="project-manage-new-input" placeholder="새 카테고리 이름">
-          <button type="button" class="project-manage-add-btn" id="project-manage-add-btn">+ 추가</button>
-        </div>
-      </div>
-      <textarea id="meeting-content" class="entry-content-input" rows="8" placeholder="회의 내용, 논의사항, 메모를 자유롭게 적어보세요"></textarea>
-      <div class="action-add-row">
-        <input type="text" id="meeting-action-input" placeholder="액션아이템 (선택, 예: 김송희에게 초안 공유)">
-        <button type="button" class="action-add-btn" id="meeting-action-add-btn">+ 추가</button>
-      </div>
-      <div class="staged-action-list" id="staged-action-list"></div>
-      <label class="attach-input-btn" for="meeting-file-input">📎 사진·파일 첨부</label>
-      <input type="file" id="meeting-file-input" multiple accept="image/*,.pdf,.doc,.docx,.xlsx,.pptx,.txt" style="display:none;">
-      <div class="attach-staged" id="meeting-attach-staged"></div>
-      <div class="attach-progress" id="meeting-attach-progress" style="display:none;"></div>
-      <button class="composer-submit" id="meeting-submit-btn">회의록 저장</button>
-    </div>`;
-
-  const listHtml = `<div id="meeting-list-wrap">${meetingRecordListHtml()}</div>`;
-
-  return header + filterBar + composer + listHtml;
-}
-
-function wireProjectManagePanel(){
-  const toggleBtn = document.getElementById('project-manage-toggle');
-  const panelEl = document.getElementById('project-manage-panel');
-  toggleBtn.addEventListener('click', ()=>{
-    projectManageOpen = !projectManageOpen;
-    panelEl.style.display = projectManageOpen ? 'block' : 'none';
-  });
-
-  function refreshManageList(){
-    document.getElementById('project-manage-list').innerHTML = projectManageListHtml();
-    wireManageListRows();
-  }
-
-  function wireManageListRows(){
-    document.querySelectorAll('.project-manage-name').forEach(inp=>{
-      inp.addEventListener('change', async ()=>{
-        const proj = projects.find(p=>p.id===inp.dataset.id);
-        const val = inp.value.trim();
-        if(!proj) return;
-        if(!val){ inp.value = proj.label; return; }
-        proj.label = val;
-        rebuildProjectMap();
-        await saveProjects();
-        const selectedVal = document.getElementById('meeting-project-select').value;
-        refreshProjectSelect(selectedVal);
-        refreshMeetingFilterAndList();
-      });
-    });
-    document.querySelectorAll('.project-manage-del').forEach(btn=>{
-      btn.addEventListener('click', async ()=>{
-        if(projects.length <= 1){ alert('최소 1개의 카테고리는 있어야 합니다.'); return; }
-        if(!confirm('이 카테고리를 삭제할까요? 이미 저장된 회의록의 표시는 유지되고, 새로 작성할 때만 선택할 수 없게 됩니다.')) return;
-        projects = projects.filter(p=>p.id !== btn.dataset.id);
-        rebuildProjectMap();
-        await saveProjects();
-        const selectedVal = document.getElementById('meeting-project-select').value;
-        refreshProjectSelect(selectedVal);
-        refreshManageList();
-      });
-    });
-  }
-  wireManageListRows();
-
-  const newInput = document.getElementById('project-manage-new-input');
-  async function addNewProject(){
-    const text = newInput.value.trim();
-    if(!text) return;
-    projects.push({id:newId(), label:text});
-    rebuildProjectMap();
-    await saveProjects();
-    newInput.value = '';
-    refreshProjectSelect();
-    refreshManageList();
-  }
-  document.getElementById('project-manage-add-btn').addEventListener('click', addNewProject);
-  newInput.addEventListener('keydown', (ev)=>{
-    if(ev.key !== 'Enter' || ev.isComposing || ev.keyCode === 229) return;
-    ev.preventDefault();
-    addNewProject();
-  });
-}
-
-function wireMeetingPanel(){
-  const panel = document.getElementById('panel');
-  wireCardHandlers(panel);
-  renderStagedActionItems();
-  renderMeetingStagedFiles();
-  wireMeetingFilterBar();
-  wireProjectManagePanel();
-
-  const actionInput = document.getElementById('meeting-action-input');
-  function addStagedAction(){
-    const text = actionInput.value.trim();
-    if(!text) return;
-    stagedActionItems.push({id:newId(), text, done:false});
-    actionInput.value = '';
-    renderStagedActionItems();
-  }
-  document.getElementById('meeting-action-add-btn').addEventListener('click', addStagedAction);
-  actionInput.addEventListener('keydown', (ev)=>{
-    if(ev.key !== 'Enter' || ev.isComposing || ev.keyCode === 229) return;
-    ev.preventDefault();
-    addStagedAction();
-  });
-
-  document.getElementById('meeting-file-input').addEventListener('change', (e)=>{
-    if(e.target.files.length) handleMeetingFilesStaged(e.target.files);
-    e.target.value = '';
-  });
-
-  async function submitMeeting(){
-    const titleEl = document.getElementById('meeting-title-input');
-    const title = titleEl.value.trim();
-    if(!title){ titleEl.focus(); return; }
-    const project = document.getElementById('meeting-project-select').value;
-    const content = document.getElementById('meeting-content').value.trim();
-    const newEntry = {id:newId(), date:todayStr(), ts:Date.now(), type:'meeting', title, project, content};
-    if(stagedActionItems.length) newEntry.actionItems = stagedActionItems.map(a=>({...a}));
-    if(stagedFiles.length){
-      newEntry.attachments = [];
-      for(const f of stagedFiles){
-        try{
-          await uploadAttachment(f.id, f.dataUrl);
-          newEntry.attachments.push({id:f.id, name:f.name, type:f.type, size:f.size});
-        }catch(e){ console.error('attachment save failed', e); }
-      }
+    const cells = [];
+    for (let i = startWeekday - 1; i >= 0; i--) cells.push({ day: daysInPrevMonth - i, inMonth: false, dow: null });
+    for (let d = 1; d <= daysInMonth; d++) {
+      const dow = new Date(this.viewYear, this.viewMonth, d).getDay();
+      cells.push({ day: d, inMonth: true, dow, date: toDateStr(this.viewYear, this.viewMonth, d) });
     }
-    entries.push(newEntry);
-    stagedFiles = [];
-    stagedActionItems = [];
-    await saveEntries();
-    renderStats();
-    renderSidebar();
-    renderPanel();
-  }
-  document.getElementById('meeting-submit-btn').addEventListener('click', submitMeeting);
-}
+    let nextDay = 1;
+    while (cells.length % 7 !== 0) { cells.push({ day: nextDay, inMonth: false, dow: null }); nextDay += 1; }
 
-function renderStagedActionItems(){
-  const el = document.getElementById('staged-action-list');
-  if(!el) return;
-  el.innerHTML = stagedActionItems.map(a => `
-    <div class="staged-action-item"><span>✅ ${escapeHtmlAttr(a.text)}</span><span class="rm" data-id="${a.id}">×</span></div>
-  `).join('');
-  el.querySelectorAll('.rm').forEach(rm=>{
-    rm.addEventListener('click', ()=>{
-      stagedActionItems = stagedActionItems.filter(a=>a.id !== rm.dataset.id);
-      renderStagedActionItems();
+    let html = "";
+    cells.forEach((cell) => {
+      const isToday = cell.date === this.today;
+      const dowClass = cell.dow === 0 ? "sun" : cell.dow === 6 ? "sat" : "";
+      html += `<div class="mini-day-cell ${cell.inMonth ? "" : "out"} ${isToday ? "today" : dowClass}">${cell.day}</div>`;
     });
-  });
-}
+    document.getElementById("miniDayGrid").innerHTML = html;
+  },
+};
 
-async function handleMeetingFilesStaged(fileList){
-  const progressEl = document.getElementById('meeting-attach-progress');
-  progressEl.style.display = 'block';
-  for(const file of Array.from(fileList)){
-    if(file.size > MAX_FILE_BYTES){ alert(`"${file.name}" 파일이 너무 큽니다 (4MB 이하만 첨부 가능).`); continue; }
-    progressEl.textContent = `"${file.name}" 처리 중...`;
-    try{
-      let dataUrl = await readFileAsDataURL(file);
-      dataUrl = await compressImageIfNeeded(file, dataUrl);
-      const id = newId();
-      stagedFiles.push({id, name:file.name, type:file.type, size: dataUrl.length, dataUrl});
-    }catch(e){ alert(`"${file.name}" 처리 중 오류가 발생했습니다.`); }
-  }
-  progressEl.style.display = 'none';
-  renderMeetingStagedFiles();
-}
-function renderMeetingStagedFiles(){
-  const el = document.getElementById('meeting-attach-staged');
-  if(!el) return;
-  el.innerHTML = stagedFiles.map(f => `
-    <span class="attach-staged-chip">${f.type.startsWith('image/')?'🖼️':'📎'} ${escapeHtmlAttr(f.name)}<span class="rm" data-id="${f.id}">×</span></span>
-  `).join('');
-  el.querySelectorAll('.rm').forEach(rm=>{
-    rm.addEventListener('click', ()=>{
-      stagedFiles = stagedFiles.filter(f=>f.id !== rm.dataset.id);
-      renderMeetingStagedFiles();
-    });
-  });
-}
+/* ============================================================
+   Quick memos — 3 independent freeform notepads
+   ============================================================ */
+const QuickMemos = {
+  STORAGE_KEY: "quick-memos:data",
+  memos: [],
+  saveTimer: null,
 
-/* ===================== ENTRY CARD (shared) ===================== */
-function buildEntryCardHtml(e, opts){
-  opts = opts || {};
-  const isEditing = editingEntries.has(e.id);
-  let body = '';
-  if(e.type==='checkin' && e.scores){
-    body = `<div class="entry-scores">${CATEGORIES.map(c=>`<span class="es">${c.short} <b style="color:${c.color}">${e.scores[c.id]}</b></span>`).join('')}</div>`
-         + (!isEditing && e.content ? `<div class="entry-content" style="margin-top:6px;">${escapeHtml(e.content)}</div>` : '');
-  } else {
-    body = (!isEditing && e.content) ? `<div class="entry-content">${escapeHtml(e.content)}</div>` : '';
-  }
-  if(e.metric){
-    body += `<div class="entry-metric">📈 ${escapeHtml(e.metric)}</div>`;
-  }
-  if(e.type !== 'checkin' && e.type !== 'meeting'){
-    if(e.outcome){
-      const OL = {positive:'👍 긍정적 결과', neutral:'➖ 중립적 결과', negative:'👎 부정적 결과'};
-      body += `<div class="outcome-block ${e.outcome.result}">
-        <span class="outcome-tag">${OL[e.outcome.result]}</span><span class="outcome-date">${e.outcome.date}</span>
-        <div class="outcome-text">${escapeHtml(e.outcome.text)}</div>
-      </div>`;
-    } else if(outcomeEditing.has(e.id)){
-      body += `<div class="outcome-form">
-        <div class="outcome-result-row">
-          <select class="outcome-result-select" data-id="${e.id}">
-            <option value="positive">👍 긍정적</option>
-            <option value="neutral" selected>➖ 중립</option>
-            <option value="negative">👎 부정적</option>
-          </select>
-        </div>
-        <textarea class="outcome-input" data-id="${e.id}" rows="4" placeholder="실제로 어떤 결과가 나왔나요?"></textarea>
-        <button class="outcome-save" data-id="${e.id}">결과 저장</button><button class="outcome-cancel" data-id="${e.id}">취소</button>
-      </div>`;
-    } else {
-      body += `<button class="outcome-toggle" data-id="${e.id}">+ 결과 기록하기</button>`;
-    }
-  }
-  if(e.type === 'meeting'){
-    const items = e.actionItems || [];
-    if(items.length){
-      body += `<div class="action-item-list">` + items.map(a => `
-        <div class="action-item-row ${a.done?'done':''}">
-          <input type="checkbox" class="action-item-check" data-entry="${e.id}" data-item="${a.id}" ${a.done?'checked':''}>
-          <span class="ai-text">${escapeHtml(a.text)}</span>
-          <button class="ai-del" data-entry="${e.id}" data-item="${a.id}">×</button>
-        </div>
-      `).join('') + `</div>`;
-    }
-    body += `<div class="action-item-add-inline">
-      <input type="text" class="action-item-new-input" data-entry="${e.id}" placeholder="+ 액션아이템 추가">
-      <button type="button" class="action-item-new-btn" data-entry="${e.id}">추가</button>
-    </div>`;
-  }
-  if(e.attachments && e.attachments.length){
-    body += `<div class="entry-attachments">` + e.attachments.map(a=>{
-      const dataUrl = attachmentCache[a.id];
-      if(a.type && a.type.startsWith('image/')){
-        return `<span class="attach-del">
-          <img class="attach-thumb" src="${dataUrl || ''}" data-dl="${a.id}" data-name="${escapeHtmlAttr(a.name)}" title="${escapeHtmlAttr(a.name)} · ${formatSize(a.size)} (클릭하여 다운로드)">
-          <button class="attach-del-btn" data-entry="${e.id}" data-att="${a.id}">×</button>
-        </span>`;
-      }
-      return `<span class="attach-del">
-        <span class="attach-file-chip">
-          <span class="af-icon">📄</span>
-          <span><span class="af-name">${escapeHtmlAttr(a.name)}</span><br><span class="af-size">${formatSize(a.size)}</span></span>
-          <span class="af-dl" data-dl="${a.id}" data-name="${escapeHtmlAttr(a.name)}">↓</span>
-        </span>
-        <button class="attach-del-btn" data-entry="${e.id}" data-att="${a.id}">×</button>
-      </span>`;
-    }).join('') + `</div>`;
-  }
-  if(e.type !== 'checkin'){
-    body += `<button class="entry-attach-add" data-entry="${e.id}">📎 + 첨부 추가</button><input type="file" class="entry-file-input" data-entry="${e.id}" multiple accept="image/*,.pdf,.doc,.docx,.xlsx,.pptx,.txt" style="display:none;">`;
-  }
-  const dom = (opts.showDomainTag && e.domain) ? DOM_MAP[e.domain] : null;
-  const domTag = dom ? `<span class="entry-dom-tag" style="border:1px solid ${dom.color}; color:${dom.color}">${dom.icon} ${dom.short}</span>` : '';
-  const proj = (e.type==='meeting' && e.project) ? projectMap[e.project] : null;
-  const projTag = proj ? `<span class="meeting-project-tag">${escapeHtmlAttr(proj.label)}</span>` : '';
-  const phaseTag = (e.type!=='checkin' && e.type!=='meeting') ? `<span class="entry-phase-tag ${e.phase||'study'}">${PHASE_LABEL[e.phase||'study']}</span>` : '';
-  const exTag = e.isExample ? `<span class="entry-example-tag">예시</span>` : '';
-  let borderColor = 'var(--faint)';
-  if(e.type==='checkin') borderColor = 'var(--teal)';
-  else if(e.type==='meeting') borderColor = '#2F6FED';
-  else if(e.outcome) borderColor = 'var(--navy)';
-  else if(e.metric) borderColor = 'var(--orange)';
-  return `<div class="entry" data-type="${e.type}" style="border-left-color:${borderColor}">
-    <div class="entry-top">
-      <div class="entry-meta">
-        <span class="entry-tag ${e.type}">${TYPE_LABEL[e.type]}</span>
-        ${phaseTag}
-        ${domTag}
-        ${projTag}
-        ${exTag}
-        <span class="entry-date">${e.date}</span>
-      </div>
-      <div>
-        <button class="entry-edit" data-id="${e.id}" title="수정">✎</button>
-        <button class="entry-del" data-id="${e.id}">×</button>
-      </div>
-    </div>
-    ${isEditing ? `
-      <input type="text" class="edit-title-input" data-id="${e.id}" value="${escapeHtmlAttr(e.title)}">
-      <textarea class="edit-content-input" data-id="${e.id}" rows="5" placeholder="내용">${escapeHtml(e.content || '')}</textarea>
-      <button class="edit-save" data-id="${e.id}">저장</button><button class="edit-cancel" data-id="${e.id}">취소</button>
-    ` : `<div class="entry-title">${escapeHtml(e.title)}</div>`}
-    ${body}
-  </div>`;
-}
-
-function wireCardHandlers(scope){
-  scope.querySelectorAll('.entry-del').forEach(btn=>{
-    btn.addEventListener('click', async ()=>{
-      const id = btn.dataset.id;
-      const entry = entries.find(e=>e.id===id);
-      if(entry && entry.attachments){
-        for(const a of entry.attachments) await deleteAttachmentFile(a.id);
-      }
-      entries = entries.filter(e => e.id !== id);
-      await saveEntries();
-      renderStats();
-      renderSidebar();
-      renderPanel();
-    });
-  });
-  scope.querySelectorAll('.entry-edit').forEach(btn=>{
-    btn.addEventListener('click', ()=>{ editingEntries.add(btn.dataset.id); renderPanel(); });
-  });
-  scope.querySelectorAll('.edit-cancel').forEach(btn=>{
-    btn.addEventListener('click', ()=>{ editingEntries.delete(btn.dataset.id); renderPanel(); });
-  });
-  scope.querySelectorAll('.edit-save').forEach(btn=>{
-    btn.addEventListener('click', async ()=>{
-      const id = btn.dataset.id;
-      const titleEl = scope.querySelector(`.edit-title-input[data-id="${id}"]`);
-      const contentEl = scope.querySelector(`.edit-content-input[data-id="${id}"]`);
-      const newTitle = titleEl.value.trim();
-      if(!newTitle){ titleEl.focus(); return; }
-      const entry = entries.find(e=>e.id===id);
-      entry.title = newTitle;
-      entry.content = contentEl.value.trim();
-      editingEntries.delete(id);
-      await saveEntries();
-      renderSidebar();
-      renderPanel();
-    });
-  });
-  scope.querySelectorAll('.outcome-toggle').forEach(btn=>{
-    btn.addEventListener('click', ()=>{ outcomeEditing.add(btn.dataset.id); renderPanel(); });
-  });
-  scope.querySelectorAll('.outcome-cancel').forEach(btn=>{
-    btn.addEventListener('click', ()=>{ outcomeEditing.delete(btn.dataset.id); renderPanel(); });
-  });
-  scope.querySelectorAll('.outcome-save').forEach(btn=>{
-    btn.addEventListener('click', async ()=>{
-      const id = btn.dataset.id;
-      const textEl = scope.querySelector(`.outcome-input[data-id="${id}"]`);
-      const selectEl = scope.querySelector(`.outcome-result-select[data-id="${id}"]`);
-      const text = textEl.value.trim();
-      if(!text){ textEl.focus(); return; }
-      const entry = entries.find(e=>e.id===id);
-      entry.outcome = {date:todayStr(), text, result:selectEl.value};
-      outcomeEditing.delete(id);
-      await saveEntries();
-      renderPanel();
-    });
-  });
-  scope.querySelectorAll('.attach-thumb, .af-dl').forEach(node=>{
-    node.addEventListener('click', async ()=>{
-      const url = attachmentCache[node.dataset.dl];
-      if(url) await triggerDownload(url, node.dataset.name);
-      else alert('파일을 불러오는 중입니다. 잠시 후 다시 시도해주세요.');
-    });
-  });
-  scope.querySelectorAll('.attach-del-btn').forEach(btn=>{
-    btn.addEventListener('click', async ()=>{
-      const entryId = btn.dataset.entry;
-      const attId = btn.dataset.att;
-      const entry = entries.find(x=>x.id===entryId);
-      if(entry && entry.attachments) entry.attachments = entry.attachments.filter(a=>a.id !== attId);
-      await deleteAttachmentFile(attId);
-      await saveEntries();
-      renderPanel();
-    });
-  });
-  scope.querySelectorAll('.action-item-check').forEach(chk=>{
-    chk.addEventListener('change', async ()=>{
-      const entry = entries.find(e=>e.id===chk.dataset.entry);
-      if(!entry || !entry.actionItems) return;
-      const item = entry.actionItems.find(a=>a.id===chk.dataset.item);
-      if(item) item.done = chk.checked;
-      await saveEntries();
-      renderPanel();
-    });
-  });
-  scope.querySelectorAll('.ai-del').forEach(btn=>{
-    btn.addEventListener('click', async ()=>{
-      const entry = entries.find(e=>e.id===btn.dataset.entry);
-      if(!entry || !entry.actionItems) return;
-      entry.actionItems = entry.actionItems.filter(a=>a.id !== btn.dataset.item);
-      await saveEntries();
-      renderPanel();
-    });
-  });
-  scope.querySelectorAll('.action-item-new-btn').forEach(btn=>{
-    btn.addEventListener('click', async ()=>{
-      const entryId = btn.dataset.entry;
-      const input = scope.querySelector(`.action-item-new-input[data-entry="${entryId}"]`);
-      const text = input.value.trim();
-      if(!text) return;
-      const entry = entries.find(e=>e.id===entryId);
-      if(!entry) return;
-      if(!entry.actionItems) entry.actionItems = [];
-      entry.actionItems.push({id:newId(), text, done:false});
-      await saveEntries();
-      renderPanel();
-    });
-  });
-  scope.querySelectorAll('.action-item-new-input').forEach(input=>{
-    input.addEventListener('keydown', (ev)=>{
-      if(ev.key !== 'Enter' || ev.isComposing || ev.keyCode === 229) return;
-      ev.preventDefault();
-      scope.querySelector(`.action-item-new-btn[data-entry="${input.dataset.entry}"]`).click();
-    });
-  });
-  scope.querySelectorAll('.entry-attach-add').forEach(btn=>{
-    btn.addEventListener('click', ()=>{
-      scope.querySelector(`.entry-file-input[data-entry="${btn.dataset.entry}"]`).click();
-    });
-  });
-  scope.querySelectorAll('.entry-file-input').forEach(input=>{
-    input.addEventListener('change', async (ev)=>{
-      const entryId = input.dataset.entry;
-      const entry = entries.find(x=>x.id===entryId);
-      if(!entry) return;
-      if(!entry.attachments) entry.attachments = [];
-      for(const file of Array.from(ev.target.files)){
-        if(file.size > MAX_FILE_BYTES){ alert(`"${file.name}" 파일이 너무 큽니다 (4MB 이하만 첨부 가능).`); continue; }
-        try{
-          let dataUrl = await readFileAsDataURL(file);
-          dataUrl = await compressImageIfNeeded(file, dataUrl);
-          const id = newId();
-          await uploadAttachment(id, dataUrl);
-          entry.attachments.push({id, name:file.name, type:file.type, size:dataUrl.length});
-        }catch(e){ alert(`"${file.name}" 처리 중 오류가 발생했습니다.`); }
-      }
-      ev.target.value = '';
-      await saveEntries();
-      renderPanel();
-    });
-  });
-}
-
-/* ===================== RECORD PANEL WIRING ===================== */
-function wireRecordPanel(){
-  const panel = document.getElementById('panel');
-  wireCardHandlers(panel);
-
-  const quickInput = document.getElementById('quick-add-input');
-
-  panel.querySelectorAll('.phase-filter-pill').forEach(pill=>{
-    pill.addEventListener('click', ()=>{
-      phaseFilter = pill.dataset.pf;
-      renderPanel();
-    });
-  });
-
-  if(quickInput){
-    panel.querySelectorAll('.phase-pill').forEach(pill=>{
-      pill.addEventListener('click', ()=>{
-        selectedPhase = pill.dataset.phase;
-        panel.querySelectorAll('.phase-pill').forEach(p=>p.classList.remove('active'));
-        pill.classList.add('active');
-      });
-    });
-
-    document.getElementById('file-input').addEventListener('change', (e)=>{
-      if(e.target.files.length) handleFilesStaged(e.target.files);
-      e.target.value = '';
-    });
-    renderStagedFiles();
-
-    async function submitEntry(){
-      const title = quickInput.value.trim();
-      if(!title){ quickInput.focus(); return; }
-      const contentEl = document.getElementById('entry-content');
-      const domain = currentView === 'all' ? null : currentView;
-      const newEntry = {id:newId(), date:todayStr(), ts:Date.now(), type:'journal', title, content:contentEl.value.trim(), domain, phase:selectedPhase};
-      if(stagedFiles.length){
-        newEntry.attachments = [];
-        for(const f of stagedFiles){
-          try{
-            await uploadAttachment(f.id, f.dataUrl);
-            newEntry.attachments.push({id:f.id, name:f.name, type:f.type, size:f.size});
-          }catch(e){ console.error('attachment save failed', e); }
+  async init() {
+    try {
+      const result = await window.storage.get(this.STORAGE_KEY, false);
+      if (result && result.value) {
+        const parsed = JSON.parse(result.value);
+        if (Array.isArray(parsed)) {
+          this.memos = parsed;
+        } else if (parsed && typeof parsed === "object") {
+          // migrate old fixed-key format { "memo-1": "...", ... }
+          this.memos = Object.keys(parsed)
+            .sort()
+            .map((k) => ({ id: newId(), text: parsed[k] || "" }));
         }
       }
-      entries.push(newEntry);
-      stagedFiles = [];
-      selectedPhase = 'study';
-      await saveEntries();
-      renderStats();
-      renderSidebar();
-      renderPanel();
+    } catch (e) {}
+    if (this.memos.length === 0) {
+      this.memos = [{ id: newId(), text: "" }, { id: newId(), text: "" }, { id: newId(), text: "" }];
     }
+    this.render();
+  },
+  addMemo() {
+    this.memos.push({ id: newId(), text: "" });
+    this.render();
+    this.persist();
+  },
+  deleteMemo(id) {
+    this.memos = this.memos.filter((m) => m.id !== id);
+    this.render();
+    this.persist();
+  },
+  updateMemo(id, text) {
+    const m = this.memos.find((x) => x.id === id);
+    if (m) m.text = text;
+    this.scheduleSave();
+  },
+  autoSize(el) { el.style.height = "auto"; el.style.height = el.scrollHeight + "px"; },
+  scheduleSave() { clearTimeout(this.saveTimer); this.saveTimer = setTimeout(() => this.persist(), 500); },
+  async persist() { try { await window.storage.set(this.STORAGE_KEY, JSON.stringify(this.memos), false); } catch (e) {} },
 
-    quickInput.addEventListener('keydown', (ev)=>{
-      // 한글 입력(IME) 조합 중에는 Enter가 조합 확정으로도 쓰이므로, 조합 중 Enter는 무시한다
-      if(ev.key !== 'Enter' || ev.isComposing || ev.keyCode === 229) return;
-      submitEntry();
+  render() {
+    const row = document.getElementById("memoRow");
+    let html = "";
+    this.memos.forEach((m) => {
+      html += `<div class="panel memo-box">`;
+      html += `<div class="memo-label"><span>메모</span><button class="delete-memo-btn" onclick="QuickMemos.deleteMemo('${m.id}')">✕</button></div>`;
+      html += `<textarea id="memo-${m.id}" placeholder="적어두고 싶은 것">${escapeHtml(m.text)}</textarea>`;
+      html += `</div>`;
     });
-    document.getElementById('quick-add-btn').addEventListener('click', submitEntry);
-  }
+    row.innerHTML = html;
+    this.memos.forEach((m) => {
+      const el = document.getElementById(`memo-${m.id}`);
+      this.autoSize(el);
+      el.oninput = () => { this.updateMemo(m.id, el.value); this.autoSize(el); };
+    });
+  },
+};
+
+/* ============================================================
+   Journal — weeks auto-generated from the month shown in MiniCal
+   ============================================================ */
+const JOURNAL_STORAGE_KEY = "monthly-auto-journal:data";
+let journalSaveTimer = null;
+function scheduleJournalSave() { clearTimeout(journalSaveTimer); journalSaveTimer = setTimeout(() => Journal.persist(), 500); }
+
+function mondayOf(dateStr) {
+  const d = new Date(dateStr);
+  const dow = d.getDay();
+  const diff = dow === 0 ? -6 : 1 - dow;
+  d.setDate(d.getDate() + diff);
+  return toDateStr(d.getFullYear(), d.getMonth(), d.getDate());
 }
 
-async function handleFilesStaged(fileList){
-  const progressEl = document.getElementById('attach-progress');
-  progressEl.style.display = 'block';
-  for(const file of Array.from(fileList)){
-    if(file.size > MAX_FILE_BYTES){ alert(`"${file.name}" 파일이 너무 큽니다 (4MB 이하만 첨부 가능).`); continue; }
-    progressEl.textContent = `"${file.name}" 처리 중...`;
-    try{
-      let dataUrl = await readFileAsDataURL(file);
-      dataUrl = await compressImageIfNeeded(file, dataUrl);
-      const id = newId();
-      stagedFiles.push({id, name:file.name, type:file.type, size: dataUrl.length, dataUrl});
-    }catch(e){ alert(`"${file.name}" 처리 중 오류가 발생했습니다.`); }
-  }
-  progressEl.style.display = 'none';
-  renderStagedFiles();
+function addDays(dateStr, n) {
+  const d = new Date(dateStr);
+  d.setDate(d.getDate() + n);
+  return toDateStr(d.getFullYear(), d.getMonth(), d.getDate());
 }
-function renderStagedFiles(){
-  const el = document.getElementById('attach-staged');
-  if(!el) return;
-  el.innerHTML = stagedFiles.map(f => `
-    <span class="attach-staged-chip">${f.type.startsWith('image/')?'🖼️':'📎'} ${escapeHtmlAttr(f.name)}<span class="rm" data-id="${f.id}">×</span></span>
-  `).join('');
-  el.querySelectorAll('.rm').forEach(rm=>{
-    rm.addEventListener('click', ()=>{
-      stagedFiles = stagedFiles.filter(f=>f.id !== rm.dataset.id);
-      renderStagedFiles();
+
+function computeMonthWeeks(year, month) {
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+  const firstMonday = mondayOf(toDateStr(year, month, 1));
+  const lastMonday = mondayOf(toDateStr(year, month, daysInMonth));
+
+  const weeks = [];
+  let cursor = firstMonday;
+  while (true) {
+    const dates = [];
+    for (let i = 0; i < 5; i++) dates.push(addDays(cursor, i));
+    weeks.push({ key: cursor, dates });
+    if (cursor === lastMonday) break;
+    cursor = addDays(cursor, 7);
+  }
+  weeks.forEach((w, idx) => { w.label = `${idx + 1}주차`; });
+  return weeks;
+}
+
+const Journal = {
+  todos: [],          // { id, text, done, date: 'YYYY-MM-DD' | null }
+  weekMemos: {},       // { weekKey: text }
+  today: todayStr(),
+
+  async init() {
+    try {
+      const result = await window.storage.get(JOURNAL_STORAGE_KEY, false);
+      if (result && result.value) {
+        const data = JSON.parse(result.value);
+        this.todos = data.todos || [];
+        this.weekMemos = data.weekMemos || {};
+      }
+    } catch (e) {}
+    this.render();
+  },
+  showError(msg) {
+    const el = document.getElementById("journalError");
+    if (msg) { el.style.display = "block"; el.textContent = msg; } else el.style.display = "none";
+  },
+  async persist() {
+    try {
+      const result = await window.storage.set(JOURNAL_STORAGE_KEY, JSON.stringify({ todos: this.todos, weekMemos: this.weekMemos }), false);
+      if (!result) this.showError("저장에 실패했습니다.");
+      else this.showError("");
+    } catch (e) { this.showError("저장에 실패했습니다."); }
+  },
+  reset() {
+    const weeks = computeMonthWeeks(MiniCal.viewYear, MiniCal.viewMonth);
+    const monthDates = new Set(weeks.flatMap((w) => w.dates.filter(Boolean)));
+    this.todos = this.todos.filter((t) => !(t.date && monthDates.has(t.date)));
+    weeks.forEach((w) => delete this.weekMemos[w.key]);
+    this.render();
+    this.persist();
+  },
+  addTodoFromInput(date, inputId) {
+    const input = document.getElementById(inputId);
+    const text = input ? input.value.trim() : "";
+    if (!text) return;
+    this.todos.push({ id: newId(), text, done: false, date });
+    this.render();
+    this.persist();
+  },
+  toggleTodo(id) {
+    const t = this.todos.find((x) => x.id === id);
+    if (t) t.done = !t.done;
+    this.render();
+    this.persist();
+  },
+  deleteTodo(id) {
+    this.todos = this.todos.filter((t) => t.id !== id);
+    this.render();
+    this.persist();
+  },
+  setTodoDate(id, date) {
+    const t = this.todos.find((x) => x.id === id);
+    if (t) t.date = date || null;
+    this.render();
+    this.persist();
+  },
+  rollover(id) {
+    const t = this.todos.find((x) => x.id === id);
+    if (t && t.date) {
+      const d = new Date(t.date);
+      d.setDate(d.getDate() + 1);
+      t.date = toDateStr(d.getFullYear(), d.getMonth(), d.getDate());
+      this.render();
+      this.persist();
+    }
+  },
+  updateWeekMemo(weekKey, text) {
+    this.weekMemos[weekKey] = text;
+    scheduleJournalSave();
+  },
+
+  render() {
+    document.getElementById("journalTitle").textContent = `${MiniCal.viewMonth + 1}월 업무일지`;
+
+    const weeks = computeMonthWeeks(MiniCal.viewYear, MiniCal.viewMonth);
+    const WEEKDAY_LABELS = ["월", "화", "수", "목", "금"];
+    const maxDates = 5;
+    const ROW_HEADER = 1;
+    const ROW_DATE_START = 2;
+    const ROW_MEMO = ROW_DATE_START + maxDates;
+
+    const grid = document.getElementById("grid");
+    grid.style.gridTemplateColumns = `70px repeat(${weeks.length}, minmax(200px, 1fr))`;
+    grid.style.gridTemplateRows = `40px repeat(${maxDates}, minmax(48px, auto)) minmax(110px, auto)`;
+
+    let html = "";
+    html += `<div class="cell" style="grid-column:1;grid-row:${ROW_HEADER};background:#F7F8FA;"></div>`;
+    for (let i = 0; i < maxDates; i++) {
+      html += `<div class="cell" style="grid-column:1;grid-row:${ROW_DATE_START + i};background:#F7F8FA;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#8B95A1;">${WEEKDAY_LABELS[i]}</div>`;
+    }
+    html += `<div class="cell" style="grid-column:1;grid-row:${ROW_MEMO};background:#F5F3FF;color:#7C6FE8;font-size:12px;font-weight:700;padding-top:10px;border-bottom:none;">메모</div>`;
+
+    weeks.forEach((week, wi) => {
+      const col = wi + 2;
+      const weekTodos = this.todos.filter((t) => t.date && week.dates.includes(t.date));
+      const total = weekTodos.length;
+      const doneCount = weekTodos.filter((t) => t.done).length;
+      const pct = total ? Math.round((doneCount / total) * 100) : 0;
+
+      html += `<div class="cell" style="grid-column:${col};grid-row:${ROW_HEADER};display:flex;align-items:center;justify-content:space-between;background:#F7F8FA;">`;
+      html += `<span class="week-label">${week.label}</span>`;
+      if (total > 0) html += `<span class="progress-badge" style="color:${pct === 100 ? "#1F9254" : "#FC9600"};">${doneCount}/${total} · ${pct}%</span>`;
+      html += `</div>`;
+
+      for (let i = 0; i < maxDates; i++) {
+        const date = week.dates[i];
+        if (!date) { html += `<div class="cell" style="grid-column:${col};grid-row:${ROW_DATE_START + i};"></div>`; continue; }
+        const items = this.todos.filter((t) => t.date === date);
+        const isToday = date === this.today;
+        const dObj = new Date(date);
+        const inMonth = dObj.getFullYear() === MiniCal.viewYear && dObj.getMonth() === MiniCal.viewMonth;
+        html += `<div class="cell day-cell" style="grid-column:${col};grid-row:${ROW_DATE_START + i};background:${isToday ? "#FFF4E6" : inMonth ? "#fff" : "#FAFAFB"};" ondragover="event.preventDefault(); event.currentTarget.classList.add('drop-hover');" ondragleave="event.currentTarget.classList.remove('drop-hover');" ondrop="event.preventDefault(); event.currentTarget.classList.remove('drop-hover'); Journal.setTodoDate(event.dataTransfer.getData('text/plain'), '${date}');">`;
+        html += `<div class="day-header"><span class="day-date-label ${isToday ? "today" : ""}" style="${inMonth ? "" : "color:#C3C9CF;"}">${toMD(date)}</span></div>`;
+        items.forEach((t) => { html += renderTodoItem(t); });
+        const dayInputId = `day-input-${date}`;
+        html += `<textarea id="${dayInputId}" class="boxed" rows="1" placeholder="" oninput="this.style.height='auto'; this.style.height=this.scrollHeight+'px';" onkeydown="if(event.key==='Enter' && !event.shiftKey && !event.isComposing && event.keyCode !== 229){event.preventDefault(); Journal.addTodoFromInput('${date}', '${dayInputId}'); this.value=''; this.style.height='auto';}"></textarea>`;
+        html += `</div>`;
+      }
+
+      const memoId = `week-memo-${week.key}`;
+      html += `<div class="cell" style="grid-column:${col};grid-row:${ROW_MEMO};background:#F5F3FF;border-bottom:none;">`;
+      html += `<textarea id="${memoId}" placeholder="메모" rows="4" style="min-height:90px;" oninput="Journal.updateWeekMemo('${week.key}', this.value); this.style.height='auto'; this.style.height=this.scrollHeight+'px';">${escapeHtml(this.weekMemos[week.key] || "")}</textarea>`;
+      html += `</div>`;
     });
+
+    grid.innerHTML = html;
+    weeks.forEach((week) => {
+      const el = document.getElementById(`week-memo-${week.key}`);
+      if (el) { el.style.height = "auto"; el.style.height = el.scrollHeight + "px"; }
+    });
+
+    function renderTodoItem(todo) {
+      let row = `<div class="todo-row" draggable="true" ondragstart="event.dataTransfer.setData('text/plain', '${todo.id}'); event.currentTarget.classList.add('dragging');" ondragend="event.currentTarget.classList.remove('dragging');">`;
+      row += `<input type="checkbox" ${todo.done ? "checked" : ""} onchange="Journal.toggleTodo('${todo.id}')" style="margin-top:2px;flex-shrink:0;cursor:pointer;" />`;
+      row += `<span class="todo-text ${todo.done ? "done" : ""}">${escapeHtml(todo.text)}</span>`;
+      if (!todo.done) row += `<button class="icon-btn rollover-btn" title="다음 날로 이월" onclick="Journal.rollover('${todo.id}')">→</button>`;
+      row += `<button class="icon-btn" onclick="Journal.deleteTodo('${todo.id}')">✕</button>`;
+      row += `</div>`;
+      return row;
+    }
+  },
+};
+
+window.startApp = function () {
+  MiniCal.init();
+  QuickMemos.init();
+  Journal.init();
+};
+</script>
+
+<script type="module">
+  // ---- hyeyoung-os Firebase 연동 ----
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-app.js";
+  import {
+    getFirestore, doc, getDoc, setDoc,
+  } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js";
+  import {
+    getAuth, signInAnonymously, onAuthStateChanged,
+  } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-auth.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyD1e1RuI7PGWWahCeyxJ_rny4LKf18mLn8",
+    authDomain: "hyeyoung-os.firebaseapp.com",
+    databaseURL: "https://hyeyoung-os-default-rtdb.asia-southeast1.firebasedatabase.app",
+    projectId: "hyeyoung-os",
+    storageBucket: "hyeyoung-os.firebasestorage.app",
+    messagingSenderId: "1096722918453",
+    appId: "1:1096722918453:web:8e116c5f583431a095157c",
+    measurementId: "G-XVSTQPLZR1",
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+  const auth = getAuth(app);
+
+  // 업무일지 전용 컬렉션. 기존 hyeyoung-os 데이터(학습영역, 역량체크인 등)와 섞이지 않게 분리.
+  const COLLECTION = "worklog";
+
+  // 기존 코드가 쓰던 window.storage.get/set(key, value, shared) 형태를 그대로 흉내내서
+  // 원래 로직(App/MiniCal/QuickMemos/Journal)은 한 줄도 안 건드리고 저장소만 Firestore로 교체.
+  window.storage = {
+    async get(key) {
+      const snap = await getDoc(doc(db, COLLECTION, key));
+      if (!snap.exists()) return null;
+      const data = snap.data();
+      return { key, value: data.value, shared: false };
+    },
+    async set(key, value) {
+      await setDoc(doc(db, COLLECTION, key), { value, updatedAt: Date.now() });
+      return { key, value, shared: false };
+    },
+  };
+
+  onAuthStateChanged(auth, (user) => {
+    if (user) {
+      window.startApp();
+    }
   });
-}
-
-/* ===================== CHECKIN PANEL WIRING ===================== */
-function buildCheckinGrid(){
-  const grid = document.getElementById('checkin-grid');
-  if(!grid) return;
-  grid.innerHTML = CATEGORIES.map(c => `
-    <div class="checkin-item">
-      <div class="ci-label"><b><span class="ci-dot" style="background:${c.color}"></span>${c.label}</b><span id="ci-val-${c.id}" style="color:${c.color}">3</span></div>
-      <input type="range" min="1" max="5" step="1" value="3" data-cat="${c.id}" style="accent-color:${c.color}"
-             oninput="document.getElementById('ci-val-'+this.dataset.cat).textContent=this.value">
-    </div>
-  `).join('');
-}
-
-function wireCheckinPanel(){
-  const panel = document.getElementById('panel');
-  wireCardHandlers(panel);
-  buildCheckinGrid();
-  renderChart();
-  renderSnapshot();
-
-  document.getElementById('checkin-submit').addEventListener('click', async ()=>{
-    const title = document.getElementById('checkin-title').value.trim() || '역량 체크인';
-    const note = document.getElementById('checkin-note').value.trim();
-    const scores = {};
-    document.querySelectorAll('#checkin-grid input[type="range"]').forEach(inp=>{
-      scores[inp.dataset.cat] = parseInt(inp.value);
-    });
-    entries.push({id:newId(), date:todayStr(), ts:Date.now(), type:'checkin', title, content:note, scores});
-    await saveEntries();
-    renderStats();
-    renderSidebar();
-    renderPanel();
+  signInAnonymously(auth).catch((err) => {
+    console.error("Firebase 인증 실패:", err);
+    // 인증이 안 되더라도 화면은 뜨게 (저장은 실패로 표시됨)
+    window.startApp();
   });
-}
-
-function renderChart(){
-  const checkins = entries.filter(e=>e.type==='checkin').sort((a,b)=>a.ts-b.ts);
-  const card = document.getElementById('chart-card');
-  if(!card) return;
-  if(checkins.length === 0){
-    card.innerHTML = `<div class="chart-empty"><b>아직 역량 체크인이 없습니다</b>첫 체크인을 남기면 여기에 성장 곡선이 그려집니다.</div>`;
-    return;
-  }
-  const w = 640, h = 160, padL = 30, padR = 20, padT = 16, padB = 26;
-  const innerW = w - padL - padR, innerH = h - padT - padB;
-  const n = checkins.length;
-  const xFor = i => n===1 ? padL + innerW/2 : padL + (innerW * i/(n-1));
-  const yFor = v => padT + innerH - ((v-1)/4)*innerH;
-  const points = checkins.map((c,i)=>({x:xFor(i), y:yFor(avgScore(c.scores)), c}));
-  const path = points.map((p,i)=> (i===0?'M':'L') + p.x.toFixed(1) + ' ' + p.y.toFixed(1)).join(' ');
-  const gridLines = [1,2,3,4,5].map(v => `<line x1="${padL}" y1="${yFor(v)}" x2="${w-padR}" y2="${yFor(v)}" stroke="#EEF0F3" stroke-width="1"/><text x="${padL-8}" y="${yFor(v)+3}" font-size="9" fill="#9AA3B2" text-anchor="end" font-family="Pretendard">${v}</text>`).join('');
-  const nodes = points.map(p => `<circle cx="${p.x}" cy="${p.y}" r="4" fill="#FC9600" stroke="#fff" stroke-width="1.5"/>`).join('');
-  const dateLabels = points.filter((_,i)=> i===0 || i===points.length-1).map(p=>
-    `<text x="${p.x}" y="${h-6}" font-size="9" fill="#9AA3B2" text-anchor="${p===points[0]?'start':'end'}" font-family="Pretendard">${p.c.date}</text>`
-  ).join('');
-  card.innerHTML = `<svg id="chart-svg" viewBox="0 0 ${w} ${h}" xmlns="http://www.w3.org/2000/svg">
-      ${gridLines}
-      <path d="${path}" fill="none" stroke="#FC9600" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
-      ${nodes}
-      ${dateLabels}
-    </svg>
-    <div class="chart-legend">
-      <span><span class="leg-dot" style="background:#FC9600"></span>평균 역량 점수 (1~5)</span>
-      <span>체크인 ${n}회 · 최근: ${checkins[n-1].date}</span>
-    </div>`;
-}
-
-function renderSnapshot(){
-  const checkins = entries.filter(e=>e.type==='checkin').sort((a,b)=>b.ts-a.ts);
-  const card = document.getElementById('snapshot-card');
-  if(!card) return;
-  if(checkins.length === 0){
-    card.innerHTML = `<div class="chart-empty"><b>아직 스냅샷이 없습니다</b>역량 체크인을 남기면 카테고리별 강약점이 여기 표시됩니다.</div>`;
-    return;
-  }
-  const latest = checkins[0];
-  const minScore = Math.min(...CATEGORIES.map(c=>latest.scores[c.id] ?? 5));
-  card.innerHTML = CATEGORIES.map(c=>{
-    const v = latest.scores[c.id] || 0;
-    const isWeak = v === minScore;
-    return `<div class="snap-row ${isWeak?'weak':''}">
-      <div class="snap-top"><b>${c.label}${isWeak?'<span class="weak-tag">⚠️ 가장 약한 영역</span>':''}</b><span style="color:${c.color}">${v} / 5</span></div>
-      <div class="snap-track"><div class="snap-fill" style="width:${v/5*100}%; background:${c.color}"></div></div>
-    </div>`;
-  }).join('') + `<div class="chart-legend"><span>${latest.date} 기준 (${TYPE_LABEL.checkin} · ${latest.title})</span></div>`;
-}
-
-/* ===================== HERO STATS ===================== */
-function renderStats(){
-  document.getElementById('stat-total').textContent = entries.length;
-  const checkins = entries.filter(e=>e.type==='checkin').sort((a,b)=>a.ts-b.ts);
-  document.getElementById('stat-checkins').textContent = checkins.length;
-  if(entries.length > 0){
-    const earliest = Math.min(...entries.map(e=>e.ts));
-    const days = Math.max(0, Math.floor((Date.now()-earliest)/86400000));
-    document.getElementById('stat-days').innerHTML = days + '<span>일</span>';
-  } else {
-    document.getElementById('stat-days').innerHTML = '0<span>일</span>';
-  }
-  const growthEl = document.getElementById('stat-growth');
-  if(checkins.length >= 2){
-    const first = avgScore(checkins[0].scores);
-    const last = avgScore(checkins[checkins.length-1].scores);
-    const diff = (last-first).toFixed(1);
-    growthEl.textContent = (diff>=0?'+':'') + diff;
-  } else {
-    growthEl.textContent = '–';
-  }
-}
-
-/* ===================== FOOTER ACTIONS ===================== */
-document.getElementById('reset-all').addEventListener('click', async ()=>{
-  for(const id of Object.keys(attachmentCache)){
-    await deleteAttachmentFile(id);
-  }
-  attachmentCache = {};
-  entries = [];
-  await saveEntries();
-  renderStats();
-  renderSidebar();
-  renderPanel();
-});
-document.getElementById('load-example').addEventListener('click', async ()=>{
-  const existingIds = new Set(entries.map(e=>e.id));
-  EXAMPLE_ENTRIES.forEach(ex => { if(!existingIds.has(ex.id)) entries.push(ex); });
-  await saveEntries();
-  renderStats();
-  renderSidebar();
-  renderPanel();
-});
-document.getElementById('clear-example').addEventListener('click', async ()=>{
-  entries = entries.filter(e => !e.isExample);
-  await saveEntries();
-  renderStats();
-  renderSidebar();
-  renderPanel();
-});
-
-/* ===================== BOOT ===================== */
-let booted = false;
-async function bootApp(){
-  if(booted) return; // 재로그인 시 중복 초기화 방지
-  booted = true;
-  await loadEntries();
-  await loadProjects();
-  await loadAttachmentCache();
-  renderStats();
-  renderSidebar();
-  renderPanel();
-}
 </script>
 </body>
 </html>
