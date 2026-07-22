@@ -206,6 +206,23 @@
   .day-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
   .day-date-label { font-size: 12px; color: #8B95A1; font-weight: 500; }
   .day-date-label.today { color: #FC9600; font-weight: 700; }
+
+  .meeting-card { margin-bottom: 16px; }
+  .meeting-card-head { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+  .meeting-date-input {
+    border: none; background: #F2F4F6; border-radius: 8px; font-size: 12px; color: #6B7684;
+    padding: 6px 8px; flex-shrink: 0;
+  }
+  .meeting-title-input {
+    border: none; outline: none; background: transparent; font-size: 16px; font-weight: 700;
+    color: #191F28; flex: 1; min-width: 0; font-family: inherit;
+  }
+  .meeting-notes {
+    width: 100%; border: none; outline: none; resize: none; overflow: hidden;
+    background: #F9FAFB; border-radius: 8px; padding: 10px 12px; font-size: 13px; line-height: 1.7;
+    color: #191F28; font-family: inherit; margin-bottom: 12px; min-height: 60px;
+  }
+  .meeting-actions-label { font-size: 12px; font-weight: 700; color: #8B95A1; margin-bottom: 8px; }
 </style>
 </head>
 <body>
@@ -215,8 +232,8 @@
 <div class="journal-title-row">
   <div class="title" id="journalTitle">업무일지</div>
   <div class="page-tabs">
-    <button class="page-tab active" onclick="void 0">업무일지</button>
-    <button class="page-tab" onclick="alert('회의록 기능은 준비 중입니다.')">회의록</button>
+    <button class="page-tab active" id="tabBtnJournal" onclick="switchTab('journal')">업무일지</button>
+    <button class="page-tab" id="tabBtnMeetings" onclick="switchTab('meetings')">회의록</button>
   </div>
 </div>
 
@@ -245,6 +262,10 @@
   </div>
 </div>
 
+</div>
+
+<div id="journalSection">
+
 <div class="journal-header">
   <div class="fixed-toolbar" id="fixedToolbar">
     <button type="button" class="toolbar-btn" data-cmd="bold"><b>B</b></button>
@@ -264,14 +285,21 @@
     </div>
 </div>
 
-</div>
-
 <div id="journalError" class="error" style="display:none;"></div>
 
 <div style="display:flex; gap:16px; align-items:flex-start;">
   <div class="table-wrap">
     <div id="grid" class="grid journal-grid"></div>
   </div>
+</div>
+
+</div>
+
+<div id="meetingsSection" style="display:none;">
+  <div style="display:flex; justify-content:flex-end; margin-bottom:14px;">
+    <button class="btn" onclick="Meetings.addMeeting()">+ 새 회의</button>
+  </div>
+  <div id="meetingsList"></div>
 </div>
 
 <script>
@@ -751,10 +779,153 @@ function updateStickyOffset() {
 }
 window.addEventListener("resize", updateStickyOffset);
 
+/* ============================================================
+   Tab switching — 업무일지 / 회의록
+   ============================================================ */
+function switchTab(tab) {
+  const journalOn = tab === "journal";
+  document.getElementById("journalSection").style.display = journalOn ? "" : "none";
+  document.getElementById("meetingsSection").style.display = journalOn ? "none" : "";
+  document.getElementById("tabBtnJournal").classList.toggle("active", journalOn);
+  document.getElementById("tabBtnMeetings").classList.toggle("active", !journalOn);
+}
+
+/* ============================================================
+   Meetings — 회의록 (액션아이템 분리형)
+   ============================================================ */
+const MEETINGS_STORAGE_KEY = "meeting-notes:data";
+let meetingsSaveTimer = null;
+function scheduleMeetingsSave() { clearTimeout(meetingsSaveTimer); meetingsSaveTimer = setTimeout(() => Meetings.persist(), 500); }
+
+function makeMeeting(date) {
+  return { id: newId(), title: "", date: date || todayStr(), notes: "", actionItems: [] };
+}
+
+const Meetings = {
+  records: [],
+
+  async init() {
+    try {
+      const result = await window.storage.get(MEETINGS_STORAGE_KEY, false);
+      if (result && result.value) {
+        const parsed = JSON.parse(result.value);
+        if (Array.isArray(parsed)) this.records = parsed;
+      }
+    } catch (e) {}
+    this.render();
+  },
+  async persist() {
+    try { await window.storage.set(MEETINGS_STORAGE_KEY, JSON.stringify(this.records), false); } catch (e) {}
+  },
+  sortedRecords() {
+    return [...this.records].sort((a, b) => (b.date || "").localeCompare(a.date || ""));
+  },
+  addMeeting() {
+    this.records.unshift(makeMeeting(todayStr()));
+    this.render();
+    this.persist();
+  },
+  deleteMeeting(id) {
+    if (!confirm("이 회의록을 삭제할까요?")) return;
+    this.records = this.records.filter((m) => m.id !== id);
+    this.render();
+    this.persist();
+  },
+  updateField(id, field, value) {
+    const m = this.records.find((x) => x.id === id);
+    if (m) m[field] = value;
+    scheduleMeetingsSave();
+  },
+  updateFieldAndRender(id, field, value) {
+    const m = this.records.find((x) => x.id === id);
+    if (m) m[field] = value;
+    this.render();
+    this.persist();
+  },
+  addActionItem(meetingId, inputId) {
+    const input = document.getElementById(inputId);
+    const text = input ? input.value.trim() : "";
+    if (!text) return;
+    const m = this.records.find((x) => x.id === meetingId);
+    if (!m) return;
+    m.actionItems.push({ id: newId(), text, done: false, sent: false });
+    this.render();
+    this.persist();
+  },
+  toggleActionItem(meetingId, itemId) {
+    const m = this.records.find((x) => x.id === meetingId);
+    const item = m && m.actionItems.find((x) => x.id === itemId);
+    if (item) item.done = !item.done;
+    this.render();
+    this.persist();
+  },
+  deleteActionItem(meetingId, itemId) {
+    const m = this.records.find((x) => x.id === meetingId);
+    if (!m) return;
+    m.actionItems = m.actionItems.filter((x) => x.id !== itemId);
+    this.render();
+    this.persist();
+  },
+  sendToJournal(meetingId, itemId) {
+    const m = this.records.find((x) => x.id === meetingId);
+    const item = m && m.actionItems.find((x) => x.id === itemId);
+    if (!m || !item) return;
+    if (typeof Journal !== "undefined") {
+      Journal.todos.push({ id: newId(), text: item.text, done: false, date: m.date });
+      Journal.persist();
+      Journal.render();
+    }
+    item.sent = true;
+    this.render();
+    this.persist();
+  },
+
+  render() {
+    const list = document.getElementById("meetingsList");
+    const records = this.sortedRecords();
+    if (records.length === 0) {
+      list.innerHTML = `<div class="panel" style="text-align:center; color:#8B95A1; font-size:13px; padding:32px;">아직 회의록이 없습니다. "+ 새 회의"로 시작하세요.</div>`;
+      return;
+    }
+    let html = "";
+    records.forEach((m) => {
+      const inputId = `meeting-action-input-${m.id}`;
+      html += `<div class="panel meeting-card">`;
+      html += `<div class="meeting-card-head">`;
+      html += `<input type="date" class="meeting-date-input" value="${m.date}" onchange="Meetings.updateFieldAndRender('${m.id}', 'date', this.value)" />`;
+      html += `<input type="text" class="meeting-title-input" placeholder="회의명" spellcheck="false" value="${escapeHtml(m.title)}" oninput="Meetings.updateField('${m.id}', 'title', this.value)" />`;
+      html += `<button class="icon-btn" onclick="Meetings.deleteMeeting('${m.id}')">✕</button>`;
+      html += `</div>`;
+      html += `<textarea class="meeting-notes" id="meeting-notes-${m.id}" placeholder="논의 내용을 자유롭게 적어두세요" spellcheck="false" oninput="Meetings.updateField('${m.id}', 'notes', this.value); this.style.height='auto'; this.style.height=this.scrollHeight+'px';">${escapeHtml(m.notes)}</textarea>`;
+      html += `<div class="meeting-actions-label">액션아이템</div>`;
+      m.actionItems.forEach((item) => {
+        html += `<div class="todo-row">`;
+        html += `<input type="checkbox" ${item.done ? "checked" : ""} onchange="Meetings.toggleActionItem('${m.id}', '${item.id}')" style="margin-top:2px;flex-shrink:0;cursor:pointer;" />`;
+        html += `<span class="todo-text ${item.done ? "done" : ""}">${escapeHtml(item.text)}</span>`;
+        if (item.sent) {
+          html += `<span style="font-size:11px; color:#B0B8C1; flex-shrink:0;">업무일지로 보냄 ✓</span>`;
+        } else {
+          html += `<button class="icon-btn" style="color:#FC9600; font-weight:700; font-size:11px;" onclick="Meetings.sendToJournal('${m.id}', '${item.id}')">+업무일지로</button>`;
+        }
+        html += `<button class="icon-btn" onclick="Meetings.deleteActionItem('${m.id}', '${item.id}')">✕</button>`;
+        html += `</div>`;
+      });
+      html += `<textarea id="${inputId}" class="boxed" rows="1" placeholder="" spellcheck="false" oninput="this.style.height='auto'; this.style.height=this.scrollHeight+'px';" onkeydown="if(event.key==='Enter' && !event.shiftKey && !event.isComposing && event.keyCode !== 229){event.preventDefault(); Meetings.addActionItem('${m.id}', '${inputId}'); this.value=''; this.style.height='auto';}"></textarea>`;
+      html += `</div>`;
+    });
+    list.innerHTML = html;
+    records.forEach((m) => {
+      const notesEl = document.getElementById(`meeting-notes-${m.id}`);
+      if (notesEl) { notesEl.style.height = "auto"; notesEl.style.height = notesEl.scrollHeight + "px"; }
+    });
+  },
+};
+
 window.startApp = function () {
   MiniCal.init();
   QuickMemos.init();
   Journal.init();
+  Meetings.init();
   // give the DOM a moment to paint the sticky block before measuring it
   setTimeout(updateStickyOffset, 50);
   setTimeout(updateStickyOffset, 300);
