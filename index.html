@@ -69,7 +69,7 @@
     flex: 1;
     min-width: 320px;
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(4, 1fr);
     gap: 12px;
     align-items: stretch;
   }
@@ -387,8 +387,8 @@ const QuickMemos = {
     let html = "";
     this.memos.forEach((m) => {
       html += `<div class="panel memo-box">`;
-      html += `<div class="memo-label"><input type="text" id="memo-title-${m.id}" name="memo-title-${m.id}" class="memo-title-input" value="${escapeHtml(m.title || "메모")}" oninput="QuickMemos.updateMemoTitle('${m.id}', this.value)" /><button class="delete-memo-btn" onclick="QuickMemos.deleteMemo('${m.id}')">✕</button></div>`;
-      html += `<textarea id="memo-${m.id}" placeholder="적어두고 싶은 것">${escapeHtml(m.text)}</textarea>`;
+      html += `<div class="memo-label"><input type="text" id="memo-title-${m.id}" name="memo-title-${m.id}" class="memo-title-input" spellcheck="false" value="${escapeHtml(m.title || "메모")}" oninput="QuickMemos.updateMemoTitle('${m.id}', this.value)" /><button class="delete-memo-btn" onclick="QuickMemos.deleteMemo('${m.id}')">✕</button></div>`;
+      html += `<textarea id="memo-${m.id}" placeholder="적어두고 싶은 것" spellcheck="false">${escapeHtml(m.text)}</textarea>`;
       html += `</div>`;
     });
     row.innerHTML = html;
@@ -528,6 +528,7 @@ const Journal = {
     const editable = document.createElement("div");
     editable.className = "rich-edit";
     editable.contentEditable = "true";
+    editable.spellcheck = false;
     editable.innerHTML = t.html || escapeHtml(t.text);
 
     spanEl.replaceWith(editable);
@@ -614,13 +615,13 @@ const Journal = {
         html += `<div class="day-header"><span class="day-date-label ${isToday ? "today" : ""}" style="${inMonth ? "" : "color:#C3C9CF;"}">${toMD(date)}</span></div>`;
         items.forEach((t) => { html += renderTodoItem(t); });
         const dayInputId = `day-input-${date}`;
-        html += `<textarea id="${dayInputId}" class="boxed" rows="1" placeholder="" oninput="this.style.height='auto'; this.style.height=this.scrollHeight+'px';" onkeydown="if(event.key==='Enter' && !event.shiftKey && !event.isComposing && event.keyCode !== 229){event.preventDefault(); Journal.addTodoFromInput('${date}', '${dayInputId}'); this.value=''; this.style.height='auto';}"></textarea>`;
+        html += `<textarea id="${dayInputId}" class="boxed" rows="1" placeholder="" spellcheck="false" oninput="this.style.height='auto'; this.style.height=this.scrollHeight+'px';" onkeydown="if(event.key==='Enter' && !event.shiftKey && !event.isComposing && event.keyCode !== 229){event.preventDefault(); Journal.addTodoFromInput('${date}', '${dayInputId}'); this.value=''; this.style.height='auto';}"></textarea>`;
         html += `</div>`;
       }
 
       const memoId = `week-memo-${week.key}`;
       html += `<div class="cell" style="grid-column:${col};grid-row:${ROW_MEMO};background:#F5F3FF;border-bottom:none;">`;
-      html += `<textarea id="${memoId}" placeholder="메모" rows="4" style="min-height:90px;" oninput="Journal.updateWeekMemo('${week.key}', this.value); this.style.height='auto'; this.style.height=this.scrollHeight+'px';">${escapeHtml(this.weekMemos[week.key] || "")}</textarea>`;
+      html += `<textarea id="${memoId}" placeholder="메모" rows="4" spellcheck="false" style="min-height:90px;" oninput="Journal.updateWeekMemo('${week.key}', this.value); this.style.height='auto'; this.style.height=this.scrollHeight+'px';">${escapeHtml(this.weekMemos[week.key] || "")}</textarea>`;
       html += `</div>`;
     });
 
