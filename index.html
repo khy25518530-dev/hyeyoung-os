@@ -94,6 +94,18 @@
   .icon-btn:hover { color: #6B7684; }
   .rollover-btn { color: #FC9600; font-size: 14px; }
   .rollover-btn:hover { color: #E08600; }
+  .cat-dot {
+    width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; margin-top: 6px; cursor: pointer;
+  }
+  .todo-edit-input {
+    flex: 1; min-width: 0; font-size: 13px; font-family: inherit; color: #191F28;
+    border: none; outline: none; resize: none; overflow: hidden; background: #F9FAFB;
+    border-radius: 6px; padding: 1px 4px; line-height: 1.6; box-shadow: 0 0 0 2px #FFD9A0;
+  }
+  select.cat-select {
+    border: none; background: #F2F4F6; border-radius: 6px; font-size: 10px; color: #6B7684;
+    padding: 4px 4px; flex-shrink: 0; width: 52px; cursor: pointer;
+  }
   input.move-date {
     border: none; background: #F2F4F6; border-radius: 6px; font-size: 10px; color: #6B7684;
     padding: 2px 4px; flex-shrink: 0; width: 84px; cursor: pointer;
@@ -234,12 +246,14 @@ const MiniCal = {
     if (this.viewMonth < 0) { this.viewMonth = 11; this.viewYear -= 1; }
     this.render();
     if (typeof Journal !== "undefined") Journal.render();
+    if (typeof QuickMemos !== "undefined") QuickMemos.loadMonth();
   },
   nextMonth() {
     this.viewMonth += 1;
     if (this.viewMonth > 11) { this.viewMonth = 0; this.viewYear += 1; }
     this.render();
     if (typeof Journal !== "undefined") Journal.render();
+    if (typeof QuickMemos !== "undefined") QuickMemos.loadMonth();
   },
   render() {
     document.getElementById("miniCalTitle").textContent = `${this.viewYear}.${pad(this.viewMonth + 1)}`;
@@ -271,28 +285,33 @@ const MiniCal = {
    Quick memos — 3 independent freeform notepads
    ============================================================ */
 const QuickMemos = {
-  STORAGE_KEY: "quick-memos:data",
   memos: [],
   saveTimer: null,
+  loadToken: 0,
+
+  keyForCurrentMonth() {
+    return `quick-memos:${MiniCal.viewYear}-${pad(MiniCal.viewMonth + 1)}`;
+  },
 
   async init() {
+    await this.loadMonth();
+  },
+  async loadMonth() {
+    const myToken = ++this.loadToken;
+    const key = this.keyForCurrentMonth();
+    let loaded = [];
     try {
-      const result = await window.storage.get(this.STORAGE_KEY, false);
+      const result = await window.storage.get(key, false);
       if (result && result.value) {
         const parsed = JSON.parse(result.value);
-        if (Array.isArray(parsed)) {
-          this.memos = parsed;
-        } else if (parsed && typeof parsed === "object") {
-          // migrate old fixed-key format { "memo-1": "...", ... }
-          this.memos = Object.keys(parsed)
-            .sort()
-            .map((k) => ({ id: newId(), text: parsed[k] || "" }));
-        }
+        if (Array.isArray(parsed)) loaded = parsed;
       }
     } catch (e) {}
-    if (this.memos.length === 0) {
-      this.memos = [{ id: newId(), text: "" }, { id: newId(), text: "" }, { id: newId(), text: "" }];
+    if (myToken !== this.loadToken) return; // a newer month load started while this was in flight
+    if (loaded.length === 0) {
+      loaded = [{ id: newId(), text: "" }, { id: newId(), text: "" }, { id: newId(), text: "" }];
     }
+    this.memos = loaded;
     this.render();
   },
   addMemo() {
@@ -312,7 +331,9 @@ const QuickMemos = {
   },
   autoSize(el) { el.style.height = "auto"; el.style.height = el.scrollHeight + "px"; },
   scheduleSave() { clearTimeout(this.saveTimer); this.saveTimer = setTimeout(() => this.persist(), 500); },
-  async persist() { try { await window.storage.set(this.STORAGE_KEY, JSON.stringify(this.memos), false); } catch (e) {} },
+  async persist() {
+    try { await window.storage.set(this.keyForCurrentMonth(), JSON.stringify(this.memos), false); } catch (e) {}
+  },
 
   render() {
     const row = document.getElementById("memoRow");
@@ -346,6 +367,12 @@ function mondayOf(dateStr) {
   d.setDate(d.getDate() + diff);
   return toDateStr(d.getFullYear(), d.getMonth(), d.getDate());
 }
+
+const CATEGORIES = {
+  work: { label: "업무", color: "#FC9600" },
+  meeting: { label: "회의", color: "#3182F6" },
+  etc: { label: "기타", color: "#8B95A1" },
+};
 
 function addDays(dateStr, n) {
   const d = new Date(dateStr);
@@ -406,11 +433,11 @@ const Journal = {
     this.render();
     this.persist();
   },
-  addTodoFromInput(date, inputId) {
+  addTodoFromInput(date, inputId, category) {
     const input = document.getElementById(inputId);
     const text = input ? input.value.trim() : "";
     if (!text) return;
-    this.todos.push({ id: newId(), text, done: false, date });
+    this.todos.push({ id: newId(), text, done: false, date, category: category || "work" });
     this.render();
     this.persist();
   },
@@ -444,6 +471,52 @@ const Journal = {
   updateWeekMemo(weekKey, text) {
     this.weekMemos[weekKey] = text;
     scheduleJournalSave();
+  },
+  cycleCategory(id) {
+    const t = this.todos.find((x) => x.id === id);
+    if (!t) return;
+    const keys = Object.keys(CATEGORIES);
+    const idx = keys.indexOf(t.category || "work");
+    t.category = keys[(idx + 1) % keys.length];
+    this.render();
+    this.persist();
+  },
+  updateTodoText(id, text) {
+    const t = this.todos.find((x) => x.id === id);
+    if (t && text.trim()) t.text = text.trim();
+    this.render();
+    this.persist();
+  },
+  startEdit(spanEl, id) {
+    const t = this.todos.find((x) => x.id === id);
+    if (!t) return;
+    const input = document.createElement("textarea");
+    input.value = t.text;
+    input.className = "todo-edit-input";
+    input.rows = 1;
+    spanEl.replaceWith(input);
+    input.focus();
+    input.select();
+    const resize = () => { input.style.height = "auto"; input.style.height = input.scrollHeight + "px"; };
+    resize();
+    input.oninput = resize;
+    let committed = false;
+    const commit = () => {
+      if (committed) return;
+      committed = true;
+      Journal.updateTodoText(id, input.value);
+    };
+    input.onblur = commit;
+    input.onkeydown = (e) => {
+      if (e.key === "Enter" && !e.shiftKey && !e.isComposing && e.keyCode !== 229) {
+        e.preventDefault();
+        input.blur();
+      }
+      if (e.key === "Escape") {
+        committed = true;
+        Journal.render();
+      }
+    };
   },
 
   render() {
@@ -507,9 +580,11 @@ const Journal = {
     });
 
     function renderTodoItem(todo) {
+      const cat = CATEGORIES[todo.category] || CATEGORIES.work;
       let row = `<div class="todo-row" draggable="true" ondragstart="event.dataTransfer.setData('text/plain', '${todo.id}'); event.currentTarget.classList.add('dragging');" ondragend="event.currentTarget.classList.remove('dragging');">`;
       row += `<input type="checkbox" ${todo.done ? "checked" : ""} onchange="Journal.toggleTodo('${todo.id}')" style="margin-top:2px;flex-shrink:0;cursor:pointer;" />`;
-      row += `<span class="todo-text ${todo.done ? "done" : ""}">${escapeHtml(todo.text)}</span>`;
+      row += `<span class="cat-dot" title="클릭해서 색 변경 (${cat.label})" onclick="Journal.cycleCategory('${todo.id}')" style="background:${cat.color};"></span>`;
+      row += `<span class="todo-text ${todo.done ? "done" : ""}" title="더블클릭해서 수정" ondblclick="Journal.startEdit(this, '${todo.id}')">${escapeHtml(todo.text)}</span>`;
       if (!todo.done) row += `<button class="icon-btn rollover-btn" title="다음 날로 이월" onclick="Journal.rollover('${todo.id}')">→</button>`;
       row += `<button class="icon-btn" onclick="Journal.deleteTodo('${todo.id}')">✕</button>`;
       row += `</div>`;
