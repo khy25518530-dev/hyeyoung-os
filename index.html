@@ -105,6 +105,7 @@
   .rollover-btn:hover { color: #E08600; }
   .edit-wrap { flex: 1; min-width: 0; }
   .rich-edit {
+    flex: 1; min-width: 0;
     font-size: 13px; line-height: 1.6; color: #191F28; outline: none;
     background: #F9FAFB; border-radius: 6px; padding: 2px 6px; box-shadow: 0 0 0 2px #FFD9A0;
     min-height: 20px; word-break: break-word;
@@ -386,7 +387,7 @@ const QuickMemos = {
     let html = "";
     this.memos.forEach((m) => {
       html += `<div class="panel memo-box">`;
-      html += `<div class="memo-label"><input type="text" class="memo-title-input" value="${escapeHtml(m.title || "메모")}" oninput="QuickMemos.updateMemoTitle('${m.id}', this.value)" /><button class="delete-memo-btn" onclick="QuickMemos.deleteMemo('${m.id}')">✕</button></div>`;
+      html += `<div class="memo-label"><input type="text" id="memo-title-${m.id}" name="memo-title-${m.id}" class="memo-title-input" value="${escapeHtml(m.title || "메모")}" oninput="QuickMemos.updateMemoTitle('${m.id}', this.value)" /><button class="delete-memo-btn" onclick="QuickMemos.deleteMemo('${m.id}')">✕</button></div>`;
       html += `<textarea id="memo-${m.id}" placeholder="적어두고 싶은 것">${escapeHtml(m.text)}</textarea>`;
       html += `</div>`;
     });
@@ -632,7 +633,7 @@ const Journal = {
     function renderTodoItem(todo) {
       const content = todo.html || escapeHtml(todo.text);
       let row = `<div class="todo-row" draggable="true" ondragstart="event.dataTransfer.setData('text/plain', '${todo.id}'); event.currentTarget.classList.add('dragging');" ondragend="event.currentTarget.classList.remove('dragging');">`;
-      row += `<input type="checkbox" ${todo.done ? "checked" : ""} onchange="Journal.toggleTodo('${todo.id}')" style="margin-top:2px;flex-shrink:0;cursor:pointer;" />`;
+      row += `<input type="checkbox" id="todo-check-${todo.id}" name="todo-check-${todo.id}" ${todo.done ? "checked" : ""} onchange="Journal.toggleTodo('${todo.id}')" style="margin-top:2px;flex-shrink:0;cursor:pointer;" />`;
       row += `<span class="todo-text ${todo.done ? "done" : ""}" title="더블클릭: 수정" ondblclick="Journal.startEdit(this, '${todo.id}')">${content}</span>`;
       row += `<button class="icon-btn" onclick="Journal.deleteTodo('${todo.id}')">✕</button>`;
       row += `</div>`;
