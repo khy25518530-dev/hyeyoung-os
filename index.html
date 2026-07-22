@@ -44,6 +44,10 @@
     box-shadow: 0 1px 2px rgba(25,31,40,0.03), 0 2px 8px rgba(25,31,40,0.04);
     transition: background 0.15s ease, color 0.15s ease;
   }
+  .fixed-toolbar {
+    display: flex; align-items: center; gap: 6px; background: #fff; padding: 8px 12px;
+    border-radius: 12px; box-shadow: 0 1px 2px rgba(25,31,40,0.03), 0 2px 8px rgba(25,31,40,0.04);
+  }
   .nav-btn-lg:hover { background: #FFF4E6; color: #FC9600; }
   .mini-weekday-row { display: grid; grid-template-columns: repeat(7, 1fr); margin-bottom: 4px; }
   .mini-weekday-cell { text-align: center; font-size: 10px; color: #B0B8C1; font-weight: 700; }
@@ -71,6 +75,11 @@
   }
   .memo-box { min-width: 0; }
   .memo-label { font-size: 12px; font-weight: 700; color: #8B95A1; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
+  .memo-title-input {
+    border: none; outline: none; background: transparent; font-size: 12px; font-weight: 700;
+    color: #8B95A1; font-family: inherit; flex: 1; min-width: 0; padding: 2px 0; border-radius: 4px;
+  }
+  .memo-title-input:hover, .memo-title-input:focus { background: #F2F4F6; color: #191F28; padding: 2px 4px; }
   .memo-box textarea {
     width: 100%; min-height: 140px; border: none; outline: none; resize: none; overflow: hidden;
     font-size: 13px; line-height: 1.7; font-family: inherit; color: #191F28;
@@ -94,8 +103,26 @@
   .icon-btn:hover { color: #6B7684; }
   .rollover-btn { color: #FC9600; font-size: 14px; }
   .rollover-btn:hover { color: #E08600; }
-  .cat-dot {
-    width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; margin-top: 6px; cursor: pointer;
+  .edit-wrap { flex: 1; min-width: 0; }
+  .rich-edit {
+    font-size: 13px; line-height: 1.6; color: #191F28; outline: none;
+    background: #F9FAFB; border-radius: 6px; padding: 2px 6px; box-shadow: 0 0 0 2px #FFD9A0;
+    min-height: 20px; word-break: break-word;
+  }
+  .edit-toolbar { display: flex; align-items: center; gap: 6px; margin-top: 6px; }
+  .toolbar-btn {
+    width: 26px; height: 26px; border-radius: 6px; border: 1px solid #E5E8EB; background: #fff;
+    font-size: 12px; cursor: pointer; color: #191F28;
+  }
+  .toolbar-btn:hover { background: #F2F4F6; }
+  .toolbar-sep { width: 1px; height: 16px; background: #E5E8EB; margin: 0 2px; }
+  .color-swatch {
+    width: 20px; height: 20px; border-radius: 50%; border: 2px solid #fff;
+    box-shadow: 0 0 0 1px #E5E8EB; cursor: pointer; padding: 0; flex-shrink: 0;
+  }
+  .color-swatch:hover { box-shadow: 0 0 0 2px #FC9600; }
+  .color-swatch-reset {
+    background: #fff; color: #C3C9CF; font-size: 10px; display: flex; align-items: center; justify-content: center;
   }
   .todo-edit-input {
     flex: 1; min-width: 0; font-size: 13px; font-family: inherit; color: #191F28;
@@ -194,11 +221,25 @@
 <div class="journal-header">
   <div>
     <div class="title" id="journalTitle">업무일지</div>
-    <div class="subtitle">달력에서 월을 이동하면 그 달의 주차가 자동으로 생성됩니다</div>
+    <div class="subtitle">할 일을 더블클릭해서 편집하고, 드래그로 선택한 뒤 아래 툴바로 서식을 적용하세요</div>
   </div>
-  <div style="display:flex; gap:6px;">
-    <button class="nav-btn-lg" onclick="MiniCal.prevMonth()">‹</button>
-    <button class="nav-btn-lg" onclick="MiniCal.nextMonth()">›</button>
+  <div style="display:flex; gap:14px; align-items:center;">
+    <div class="fixed-toolbar" id="fixedToolbar">
+      <button type="button" class="toolbar-btn" data-cmd="bold"><b>B</b></button>
+      <button type="button" class="toolbar-btn" data-cmd="italic"><i>I</i></button>
+      <span class="toolbar-sep"></span>
+      <button type="button" class="color-swatch" data-color="#FC9600" style="background:#FC9600;"></button>
+      <button type="button" class="color-swatch" data-color="#3182F6" style="background:#3182F6;"></button>
+      <button type="button" class="color-swatch" data-color="#00C896" style="background:#00C896;"></button>
+      <button type="button" class="color-swatch" data-color="#F04452" style="background:#F04452;"></button>
+      <button type="button" class="color-swatch" data-color="#7C6FE8" style="background:#7C6FE8;"></button>
+      <button type="button" class="color-swatch" data-color="#191F28" style="background:#191F28;"></button>
+      <button type="button" class="color-swatch color-swatch-reset" data-color="reset" title="기본색">✕</button>
+    </div>
+    <div style="display:flex; gap:6px;">
+      <button class="nav-btn-lg" onclick="MiniCal.prevMonth()">‹</button>
+      <button class="nav-btn-lg" onclick="MiniCal.nextMonth()">›</button>
+    </div>
   </div>
 </div>
 
@@ -309,13 +350,13 @@ const QuickMemos = {
     } catch (e) {}
     if (myToken !== this.loadToken) return; // a newer month load started while this was in flight
     if (loaded.length === 0) {
-      loaded = [{ id: newId(), text: "" }, { id: newId(), text: "" }, { id: newId(), text: "" }];
+      loaded = [{ id: newId(), title: "메모", text: "" }, { id: newId(), title: "메모", text: "" }];
     }
     this.memos = loaded;
     this.render();
   },
   addMemo() {
-    this.memos.push({ id: newId(), text: "" });
+    this.memos.push({ id: newId(), title: "메모", text: "" });
     this.render();
     this.persist();
   },
@@ -329,6 +370,11 @@ const QuickMemos = {
     if (m) m.text = text;
     this.scheduleSave();
   },
+  updateMemoTitle(id, title) {
+    const m = this.memos.find((x) => x.id === id);
+    if (m) m.title = title;
+    this.scheduleSave();
+  },
   autoSize(el) { el.style.height = "auto"; el.style.height = el.scrollHeight + "px"; },
   scheduleSave() { clearTimeout(this.saveTimer); this.saveTimer = setTimeout(() => this.persist(), 500); },
   async persist() {
@@ -340,7 +386,7 @@ const QuickMemos = {
     let html = "";
     this.memos.forEach((m) => {
       html += `<div class="panel memo-box">`;
-      html += `<div class="memo-label"><span>메모</span><button class="delete-memo-btn" onclick="QuickMemos.deleteMemo('${m.id}')">✕</button></div>`;
+      html += `<div class="memo-label"><input type="text" class="memo-title-input" value="${escapeHtml(m.title || "메모")}" oninput="QuickMemos.updateMemoTitle('${m.id}', this.value)" /><button class="delete-memo-btn" onclick="QuickMemos.deleteMemo('${m.id}')">✕</button></div>`;
       html += `<textarea id="memo-${m.id}" placeholder="적어두고 싶은 것">${escapeHtml(m.text)}</textarea>`;
       html += `</div>`;
     });
@@ -368,11 +414,7 @@ function mondayOf(dateStr) {
   return toDateStr(d.getFullYear(), d.getMonth(), d.getDate());
 }
 
-const CATEGORIES = {
-  work: { label: "업무", color: "#FC9600" },
-  meeting: { label: "회의", color: "#3182F6" },
-  etc: { label: "기타", color: "#8B95A1" },
-};
+const COLOR_PALETTE = ["#FC9600", "#3182F6", "#00C896", "#F04452", "#7C6FE8", "#191F28"];
 
 function addDays(dateStr, n) {
   const d = new Date(dateStr);
@@ -472,51 +514,59 @@ const Journal = {
     this.weekMemos[weekKey] = text;
     scheduleJournalSave();
   },
-  cycleCategory(id) {
+  updateTodoHtml(id, html) {
     const t = this.todos.find((x) => x.id === id);
-    if (!t) return;
-    const keys = Object.keys(CATEGORIES);
-    const idx = keys.indexOf(t.category || "work");
-    t.category = keys[(idx + 1) % keys.length];
-    this.render();
-    this.persist();
-  },
-  updateTodoText(id, text) {
-    const t = this.todos.find((x) => x.id === id);
-    if (t && text.trim()) t.text = text.trim();
+    if (t) t.html = html;
     this.render();
     this.persist();
   },
   startEdit(spanEl, id) {
     const t = this.todos.find((x) => x.id === id);
     if (!t) return;
-    const input = document.createElement("textarea");
-    input.value = t.text;
-    input.className = "todo-edit-input";
-    input.rows = 1;
-    spanEl.replaceWith(input);
-    input.focus();
-    input.select();
-    const resize = () => { input.style.height = "auto"; input.style.height = input.scrollHeight + "px"; };
-    resize();
-    input.oninput = resize;
+
+    const editable = document.createElement("div");
+    editable.className = "rich-edit";
+    editable.contentEditable = "true";
+    editable.innerHTML = t.html || escapeHtml(t.text);
+
+    spanEl.replaceWith(editable);
+    editable.focus();
+    Journal.activeEditable = editable;
+
+    const rowEl = editable.closest(".todo-row");
+    if (rowEl) rowEl.draggable = false;
+
+    // place cursor at end
+    const range = document.createRange();
+    range.selectNodeContents(editable);
+    range.collapse(false);
+    const sel = window.getSelection();
+    sel.removeAllRanges();
+    sel.addRange(range);
+
     let committed = false;
     const commit = () => {
       if (committed) return;
       committed = true;
-      Journal.updateTodoText(id, input.value);
+      if (Journal.activeEditable === editable) Journal.activeEditable = null;
+      Journal.updateTodoHtml(id, editable.innerHTML);
     };
-    input.onblur = commit;
-    input.onkeydown = (e) => {
+    editable.addEventListener("blur", () => {
+      // slight delay so a fixed-toolbar mousedown (which prevents default) doesn't get treated as "click outside"
+      setTimeout(() => {
+        if (document.activeElement !== editable) commit();
+      }, 0);
+    });
+    editable.addEventListener("keydown", (e) => {
       if (e.key === "Enter" && !e.shiftKey && !e.isComposing && e.keyCode !== 229) {
         e.preventDefault();
-        input.blur();
+        editable.blur();
       }
       if (e.key === "Escape") {
         committed = true;
         Journal.render();
       }
-    };
+    });
   },
 
   render() {
@@ -580,18 +630,30 @@ const Journal = {
     });
 
     function renderTodoItem(todo) {
-      const cat = CATEGORIES[todo.category] || CATEGORIES.work;
+      const content = todo.html || escapeHtml(todo.text);
       let row = `<div class="todo-row" draggable="true" ondragstart="event.dataTransfer.setData('text/plain', '${todo.id}'); event.currentTarget.classList.add('dragging');" ondragend="event.currentTarget.classList.remove('dragging');">`;
       row += `<input type="checkbox" ${todo.done ? "checked" : ""} onchange="Journal.toggleTodo('${todo.id}')" style="margin-top:2px;flex-shrink:0;cursor:pointer;" />`;
-      row += `<span class="cat-dot" title="클릭해서 색 변경 (${cat.label})" onclick="Journal.cycleCategory('${todo.id}')" style="background:${cat.color};"></span>`;
-      row += `<span class="todo-text ${todo.done ? "done" : ""}" title="더블클릭해서 수정" ondblclick="Journal.startEdit(this, '${todo.id}')">${escapeHtml(todo.text)}</span>`;
-      if (!todo.done) row += `<button class="icon-btn rollover-btn" title="다음 날로 이월" onclick="Journal.rollover('${todo.id}')">→</button>`;
+      row += `<span class="todo-text ${todo.done ? "done" : ""}" title="더블클릭: 수정" ondblclick="Journal.startEdit(this, '${todo.id}')">${content}</span>`;
       row += `<button class="icon-btn" onclick="Journal.deleteTodo('${todo.id}')">✕</button>`;
       row += `</div>`;
       return row;
     }
   },
 };
+
+document.querySelectorAll("#fixedToolbar button").forEach((btn) => {
+  // mousedown+preventDefault keeps whatever text selection/focus is active (avoids blur before the command runs)
+  btn.addEventListener("mousedown", (e) => {
+    e.preventDefault();
+    const cmd = btn.dataset.cmd;
+    const color = btn.dataset.color;
+    try {
+      if (cmd) document.execCommand(cmd, false, null);
+      else if (color === "reset") document.execCommand("foreColor", false, "#191F28");
+      else if (color) document.execCommand("foreColor", false, color);
+    } catch (err) {}
+  });
+});
 
 window.startApp = function () {
   MiniCal.init();
