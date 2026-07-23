@@ -33,7 +33,7 @@
   .mini-cal-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
   .mini-cal-title { font-size: 14px; font-weight: 700; }
   .mini-nav-btn {
-    border: none; background: #F2F4F6; color: #6B7684; font-size: 14px; cursor: pointer;
+    border: none; background: #F2F4F6; color: #6B7684; font-size: 16px; cursor: pointer;
     width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
     transition: background 0.15s ease;
   }
@@ -50,7 +50,7 @@
   }
   .nav-btn-lg:hover { background: #FFF4E6; color: #FC9600; }
   .mini-weekday-row { display: grid; grid-template-columns: repeat(7, 1fr); margin-bottom: 4px; }
-  .mini-weekday-cell { text-align: center; font-size: 10px; color: #B0B8C1; font-weight: 700; }
+  .mini-weekday-cell { text-align: center; font-size: 11px; color: #B0B8C1; font-weight: 700; }
   .mini-weekday-cell.sun { color: #F04452; }
   .mini-weekday-cell.sat { color: #3182F6; }
   .mini-day-grid { display: grid; grid-template-columns: repeat(7, 1fr); row-gap: 2px; }
@@ -74,50 +74,50 @@
     align-items: stretch;
   }
   .memo-box { min-width: 0; }
-  .memo-label { font-size: 12px; font-weight: 700; color: #8B95A1; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
+  .memo-label { font-size: 13px; font-weight: 700; color: #8B95A1; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
   .memo-title-text {
-    font-size: 12px; font-weight: 700; color: #8B95A1; flex: 1; min-width: 0;
+    font-size: 16px; font-weight: 700; color: #8B95A1; flex: 1; min-width: 0;
     padding: 2px 0; border-radius: 4px; cursor: default;
   }
   .memo-title-input {
-    border: none; outline: none; background: transparent; font-size: 12px; font-weight: 700;
+    border: none; outline: none; background: transparent; font-size: 16px; font-weight: 700;
     color: #8B95A1; font-family: inherit; flex: 1; min-width: 0; padding: 2px 0; border-radius: 4px;
   }
   .memo-title-input:hover, .memo-title-input:focus { background: #F2F4F6; color: #191F28; padding: 2px 4px; }
   .memo-box textarea {
     width: 100%; min-height: 140px; border: none; outline: none; resize: none; overflow: hidden;
-    font-size: 13px; line-height: 1.7; font-family: inherit; color: #191F28;
+    font-size: 14px; line-height: 1.7; font-family: inherit; color: #191F28;
   }
   .add-memo-btn {
     min-height: 60px; cursor: pointer;
-    border: none; background: #fff; color: #8B95A1; font-size: 13px; font-weight: 700;
+    border: none; background: #fff; color: #8B95A1; font-size: 15px; font-weight: 700;
     display: flex; align-items: center; justify-content: center;
   }
   .add-memo-btn:hover { color: #FC9600; }
-  .delete-memo-btn { border: none; background: none; color: #C3C9CF; cursor: pointer; font-size: 12px; padding: 0; }
+  .delete-memo-btn { border: none; background: none; color: #C3C9CF; cursor: pointer; font-size: 13px; padding: 0; }
   .delete-memo-btn:hover { color: #F04452; }
 
   .todo-row { display: flex; align-items: flex-start; gap: 8px; margin-bottom: 6px; min-width: 0; cursor: grab; border-radius: 8px; padding: 2px 4px; margin-left: -4px; transition: background 0.12s ease, opacity 0.12s ease; }
   .todo-row:hover { background: #F7F8FA; }
   .todo-row.dragging { opacity: 0.35; }
   .day-cell.drop-hover { background: #FFF4E6 !important; box-shadow: inset 0 0 0 2px #FC9600; }
-  .todo-text { font-size: 13px; flex: 1; min-width: 0; word-break: break-word; white-space: pre-wrap; line-height: 1.6; padding-top: 1px; }
+  .todo-text { font-size: 14px; flex: 1; min-width: 0; word-break: break-word; white-space: pre-wrap; line-height: 1.6; padding-top: 1px; }
   .todo-text.done { color: #B0B8C1; }
   .icon-btn { border: none; background: none; cursor: pointer; padding: 0; flex-shrink: 0; font-size: 12px; color: #C3C9CF; transition: color 0.15s ease; }
   .icon-btn:hover { color: #6B7684; }
-  .rollover-btn { color: #FC9600; font-size: 14px; }
+  .rollover-btn { color: #FC9600; font-size: 16px; }
   .rollover-btn:hover { color: #E08600; }
   .edit-wrap { flex: 1; min-width: 0; }
   .rich-edit {
     flex: 1; min-width: 0;
-    font-size: 13px; line-height: 1.6; color: #191F28; outline: none;
+    font-size: 14px; line-height: 1.6; color: #191F28; outline: none;
     background: #F9FAFB; border-radius: 6px; padding: 2px 6px; box-shadow: 0 0 0 2px #FFD9A0;
     min-height: 20px; word-break: break-word;
   }
   .edit-toolbar { display: flex; align-items: center; gap: 6px; margin-top: 6px; }
   .toolbar-btn {
     width: 26px; height: 26px; border-radius: 6px; border: 1px solid #E5E8EB; background: #fff;
-    font-size: 12px; cursor: pointer; color: #191F28;
+    font-size: 13px; cursor: pointer; color: #191F28;
   }
   .toolbar-btn:hover { background: #F2F4F6; }
   .toolbar-sep { width: 1px; height: 16px; background: #E5E8EB; margin: 0 2px; }
@@ -127,19 +127,19 @@
   }
   .color-swatch:hover { box-shadow: 0 0 0 2px #FC9600; }
   .color-swatch-reset {
-    background: #fff; color: #C3C9CF; font-size: 10px; display: flex; align-items: center; justify-content: center;
+    background: #fff; color: #C3C9CF; font-size: 12px; display: flex; align-items: center; justify-content: center;
   }
   .todo-edit-input {
-    flex: 1; min-width: 0; font-size: 13px; font-family: inherit; color: #191F28;
+    flex: 1; min-width: 0; font-size: 14px; font-family: inherit; color: #191F28;
     border: none; outline: none; resize: none; overflow: hidden; background: #F9FAFB;
     border-radius: 6px; padding: 1px 4px; line-height: 1.6; box-shadow: 0 0 0 2px #FFD9A0;
   }
   select.cat-select {
-    border: none; background: #F2F4F6; border-radius: 6px; font-size: 10px; color: #6B7684;
+    border: none; background: #F2F4F6; border-radius: 6px; font-size: 16px; color: #6B7684;
     padding: 4px 4px; flex-shrink: 0; width: 52px; cursor: pointer;
   }
   input.move-date {
-    border: none; background: #F2F4F6; border-radius: 6px; font-size: 10px; color: #6B7684;
+    border: none; background: #F2F4F6; border-radius: 6px; font-size: 16px; color: #6B7684;
     padding: 2px 4px; flex-shrink: 0; width: 84px; cursor: pointer;
   }
 
@@ -153,7 +153,7 @@
 
   input.boxed, textarea.boxed {
     border: none; border-radius: 10px; padding: 8px 10px; background: transparent;
-    margin-top: 6px; width: 100%; outline: none; font-size: 13px; font-family: inherit;
+    margin-top: 6px; width: 100%; outline: none; font-size: 14px; font-family: inherit;
     color: #191F28; transition: box-shadow 0.15s ease, background 0.15s ease;
   }
   input.boxed::placeholder, textarea.boxed::placeholder { color: #C3C9CF; }
@@ -164,24 +164,22 @@
   .title { font-size: 30px; font-weight: 800; }
   .page-tabs { display: flex; gap: 8px; }
   .page-tab {
-    border: none; background: #fff; color: #8B95A1; font-size: 14px; font-weight: 700;
+    border: none; background: #fff; color: #8B95A1; font-size: 16px; font-weight: 700;
     padding: 9px 18px; border-radius: 100px; cursor: pointer;
     box-shadow: 0 1px 2px rgba(25,31,40,0.03), 0 2px 8px rgba(25,31,40,0.04);
   }
   .page-tab:hover { color: #191F28; }
   .page-tab.active { background: #FC9600; color: #fff; }
   .journal-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
-  .title { font-size: 20px; font-weight: 700; }
-  .subtitle { font-size: 12px; color: #8B95A1; margin-top: 4px; }
   .btn {
     padding: 10px 16px; border-radius: 12px; border: none; background: #FC9600; color: #fff;
-    font-size: 13px; font-weight: 700; cursor: pointer; transition: transform 0.1s ease, opacity 0.15s ease;
+    font-size: 15px; font-weight: 700; cursor: pointer; transition: transform 0.1s ease, opacity 0.15s ease;
   }
   .btn:active { transform: scale(0.97); }
   .btn.ghost { background: #fff; color: #6B7684; box-shadow: 0 1px 2px rgba(25,31,40,0.03), 0 2px 8px rgba(25,31,40,0.04); }
   .btn.ghost:hover { color: #191F28; }
   .error {
-    color: #F04452; font-size: 12px; margin-bottom: 12px; background: #FFEDEE;
+    color: #F04452; font-size: 16px; margin-bottom: 12px; background: #FFEDEE;
     padding: 10px 14px; border-radius: 10px;
   }
 
@@ -194,11 +192,11 @@
   .cell { border-right: 1px solid #F2F4F6; border-bottom: 1px solid #F2F4F6; padding: 12px 14px; overflow: hidden; min-width: 0; }
   .journal-grid textarea {
     width: 100%; border: none; outline: none; resize: none; overflow: hidden;
-    font-size: 13px; color: #191F28; font-family: inherit; background: transparent; line-height: 1.7; display: block;
+    font-size: 14px; color: #191F28; font-family: inherit; background: transparent; line-height: 1.7; display: block;
   }
   .week-label { font-size: 14px; font-weight: 700; }
   .progress-badge {
-    font-size: 11px; font-weight: 700; white-space: nowrap; flex-shrink: 0;
+    font-size: 12px; font-weight: 700; white-space: nowrap; flex-shrink: 0;
     padding: 3px 9px; border-radius: 100px; background: #FFF4E6;
   }
   .sticky-top {
@@ -210,7 +208,7 @@
   .meeting-card { margin-bottom: 16px; }
   .meeting-card-head { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
   .meeting-date-input {
-    border: none; background: #F2F4F6; border-radius: 8px; font-size: 12px; color: #6B7684;
+    border: none; background: #F2F4F6; border-radius: 8px; font-size: 16px; color: #6B7684;
     padding: 6px 8px; flex-shrink: 0;
   }
   .meeting-title-input {
@@ -219,10 +217,36 @@
   }
   .meeting-notes {
     width: 100%; border: none; outline: none; resize: none; overflow: hidden;
-    background: #F9FAFB; border-radius: 8px; padding: 10px 12px; font-size: 13px; line-height: 1.7;
+    background: #F9FAFB; border-radius: 8px; padding: 10px 12px; font-size: 14px; line-height: 1.7;
     color: #191F28; font-family: inherit; margin-bottom: 12px; min-height: 60px;
   }
-  .meeting-actions-label { font-size: 12px; font-weight: 700; color: #8B95A1; margin-bottom: 8px; }
+  .meeting-actions-label { font-size: 16px; font-weight: 700; color: #8B95A1; margin-bottom: 8px; }
+  .meeting-section-label { font-size: 16px; font-weight: 700; color: #8B95A1; margin-bottom: 8px; margin-top: 4px; }
+
+  .folder-bar { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 14px; }
+  .folder-pill {
+    border: none; background: #fff; color: #6B7684; font-size: 15px; font-weight: 700;
+    padding: 8px 16px; border-radius: 100px; cursor: pointer;
+    box-shadow: 0 1px 2px rgba(25,31,40,0.03), 0 2px 8px rgba(25,31,40,0.04);
+  }
+  .folder-pill.active { background: #FC9600; color: #fff; }
+  .folder-pill.folder-add { color: #FC9600; background: #FFF4E6; box-shadow: none; }
+  .folder-delete { margin-left: 4px; opacity: 0.6; }
+  .folder-delete:hover { opacity: 1; }
+
+  .meeting-search-bar { display: flex; gap: 8px; align-items: center; margin-bottom: 16px; }
+
+  .meeting-row-head {
+    display: flex; align-items: center; gap: 10px; cursor: pointer; padding: 2px 0;
+  }
+  .meeting-chevron { font-size: 12px; color: #B0B8C1; width: 12px; flex-shrink: 0; font-style: normal; }
+  .meeting-row-date { font-size: 12px; color: #8B95A1; flex-shrink: 0; width: 78px; }
+  .meeting-row-title { font-size: 16px; font-weight: 700; color: #191F28; flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .meeting-row-folder { font-size: 16px; color: #7C6FE8; background: #F5F3FF; padding: 2px 8px; border-radius: 100px; flex-shrink: 0; }
+  .meeting-body { margin-top: 14px; padding-top: 14px; border-top: 0.5px solid #ECEEF1; }
+  .meeting-folder-select {
+    border: none; background: #F2F4F6; border-radius: 8px; font-size: 16px; color: #6B7684; padding: 6px 8px; flex-shrink: 0;
+  }
 </style>
 </head>
 <body>
@@ -296,7 +320,11 @@
 </div>
 
 <div id="meetingsSection" style="display:none;">
-  <div style="display:flex; justify-content:flex-end; margin-bottom:14px;">
+  <div class="folder-bar" id="folderBar"></div>
+  <div class="meeting-search-bar">
+    <input type="text" id="meetingSearchText" class="boxed" placeholder="제목·내용 검색" spellcheck="false" oninput="Meetings.setSearchText(this.value)" style="flex:1; margin-top:0;" />
+    <input type="date" id="meetingSearchDate" class="meeting-date-input" onchange="Meetings.setSearchDate(this.value)" />
+    <button class="btn ghost" onclick="Meetings.clearSearch()">초기화</button>
     <button class="btn" onclick="Meetings.addMeeting()">+ 새 회의</button>
   </div>
   <div id="meetingsList"></div>
@@ -704,9 +732,9 @@ const Journal = {
     let html = "";
     html += `<div class="cell" style="grid-column:1;grid-row:${ROW_HEADER};background:#F7F8FA;"></div>`;
     for (let i = 0; i < maxDates; i++) {
-      html += `<div class="cell" style="grid-column:1;grid-row:${ROW_DATE_START + i};background:#F7F8FA;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#8B95A1;">${WEEKDAY_LABELS[i]}</div>`;
+      html += `<div class="cell" style="grid-column:1;grid-row:${ROW_DATE_START + i};background:#F7F8FA;display:flex;align-items:center;justify-content:center;font-size: 16px;font-weight:700;color:#8B95A1;">${WEEKDAY_LABELS[i]}</div>`;
     }
-    html += `<div class="cell" style="grid-column:1;grid-row:${ROW_MEMO};background:#F5F3FF;color:#7C6FE8;font-size:12px;font-weight:700;padding-top:10px;border-bottom:none;">메모</div>`;
+    html += `<div class="cell" style="grid-column:1;grid-row:${ROW_MEMO};background:#F5F3FF;color:#7C6FE8;font-size: 16px;font-weight:700;padding-top:10px;border-bottom:none;">메모</div>`;
 
     weeks.forEach((week, wi) => {
       const col = wi + 2;
@@ -797,31 +825,100 @@ const MEETINGS_STORAGE_KEY = "meeting-notes:data";
 let meetingsSaveTimer = null;
 function scheduleMeetingsSave() { clearTimeout(meetingsSaveTimer); meetingsSaveTimer = setTimeout(() => Meetings.persist(), 500); }
 
-function makeMeeting(date) {
-  return { id: newId(), title: "", date: date || todayStr(), notes: "", actionItems: [] };
+function makeMeeting(date, folderId) {
+  return { id: newId(), title: "", date: date || todayStr(), folderId: folderId || null, agenda: "", notes: "", actionItems: [] };
+}
+function makeFolder(name) {
+  return { id: newId(), name: name || "새 폴더" };
 }
 
 const Meetings = {
   records: [],
+  folders: [],
+  currentFolderId: null, // null = 전체
+  expandedIds: {},
+  searchText: "",
+  searchDate: "",
 
   async init() {
     try {
       const result = await window.storage.get(MEETINGS_STORAGE_KEY, false);
       if (result && result.value) {
         const parsed = JSON.parse(result.value);
-        if (Array.isArray(parsed)) this.records = parsed;
+        if (Array.isArray(parsed)) {
+          // migrate from the old flat-array format (no folders/agenda split)
+          this.records = parsed.map((m) => ({
+            id: m.id, title: m.title || "", date: m.date, folderId: m.folderId || null,
+            agenda: m.agenda || "", notes: m.notes || "", actionItems: m.actionItems || [],
+          }));
+          this.folders = [];
+        } else if (parsed && typeof parsed === "object") {
+          this.records = parsed.records || [];
+          this.folders = parsed.folders || [];
+        }
       }
     } catch (e) {}
     this.render();
   },
   async persist() {
-    try { await window.storage.set(MEETINGS_STORAGE_KEY, JSON.stringify(this.records), false); } catch (e) {}
+    try {
+      await window.storage.set(MEETINGS_STORAGE_KEY, JSON.stringify({ records: this.records, folders: this.folders }), false);
+    } catch (e) {}
   },
-  sortedRecords() {
-    return [...this.records].sort((a, b) => (b.date || "").localeCompare(a.date || ""));
+
+  matchesFilters(m) {
+    if (this.currentFolderId !== null && m.folderId !== this.currentFolderId) return false;
+    if (this.searchDate && m.date !== this.searchDate) return false;
+    if (this.searchText) {
+      const q = this.searchText.toLowerCase();
+      const haystack = `${m.title} ${m.agenda} ${m.notes}`.toLowerCase();
+      if (!haystack.includes(q)) return false;
+    }
+    return true;
   },
+  filteredSortedRecords() {
+    return this.records.filter((m) => this.matchesFilters(m)).sort((a, b) => (b.date || "").localeCompare(a.date || ""));
+  },
+
+  addFolder() {
+    const name = prompt("폴더 이름을 입력하세요");
+    if (!name || !name.trim()) return;
+    this.folders.push(makeFolder(name.trim()));
+    this.render();
+    this.persist();
+  },
+  deleteFolder(id) {
+    if (!confirm("폴더를 삭제할까요? 안의 회의록은 '전체'로 이동합니다.")) return;
+    this.folders = this.folders.filter((f) => f.id !== id);
+    this.records.forEach((m) => { if (m.folderId === id) m.folderId = null; });
+    if (this.currentFolderId === id) this.currentFolderId = null;
+    this.render();
+    this.persist();
+  },
+  selectFolder(id) {
+    this.currentFolderId = id;
+    this.render();
+  },
+  setSearchText(text) {
+    this.searchText = text;
+    this.render();
+  },
+  setSearchDate(date) {
+    this.searchDate = date;
+    this.render();
+  },
+  clearSearch() {
+    this.searchText = "";
+    this.searchDate = "";
+    document.getElementById("meetingSearchText").value = "";
+    document.getElementById("meetingSearchDate").value = "";
+    this.render();
+  },
+
   addMeeting() {
-    this.records.unshift(makeMeeting(todayStr()));
+    const m = makeMeeting(todayStr(), this.currentFolderId);
+    this.records.unshift(m);
+    this.expandedIds[m.id] = true;
     this.render();
     this.persist();
   },
@@ -830,6 +927,10 @@ const Meetings = {
     this.records = this.records.filter((m) => m.id !== id);
     this.render();
     this.persist();
+  },
+  toggleExpand(id) {
+    this.expandedIds[id] = !this.expandedIds[id];
+    this.render();
   },
   updateField(id, field, value) {
     const m = this.records.find((x) => x.id === id);
@@ -880,41 +981,83 @@ const Meetings = {
     this.persist();
   },
 
+  renderFolderBar() {
+    const bar = document.getElementById("folderBar");
+    let html = "";
+    html += `<button class="folder-pill ${this.currentFolderId === null ? "active" : ""}" onclick="Meetings.selectFolder(null)">전체</button>`;
+    this.folders.forEach((f) => {
+      html += `<button class="folder-pill ${this.currentFolderId === f.id ? "active" : ""}" onclick="Meetings.selectFolder('${f.id}')">${escapeHtml(f.name)}`;
+      html += ` <span class="folder-delete" onclick="event.stopPropagation(); Meetings.deleteFolder('${f.id}')">✕</span></button>`;
+    });
+    html += `<button class="folder-pill folder-add" onclick="Meetings.addFolder()">+ 폴더</button>`;
+    bar.innerHTML = html;
+  },
+
   render() {
+    this.renderFolderBar();
     const list = document.getElementById("meetingsList");
-    const records = this.sortedRecords();
+    const records = this.filteredSortedRecords();
     if (records.length === 0) {
-      list.innerHTML = `<div class="panel" style="text-align:center; color:#8B95A1; font-size:13px; padding:32px;">아직 회의록이 없습니다. "+ 새 회의"로 시작하세요.</div>`;
+      list.innerHTML = `<div class="panel" style="text-align:center; color:#8B95A1; font-size: 15px; padding:32px;">해당하는 회의록이 없습니다.</div>`;
       return;
     }
     let html = "";
     records.forEach((m) => {
-      const inputId = `meeting-action-input-${m.id}`;
+      const expanded = !!this.expandedIds[m.id];
+      const folder = this.folders.find((f) => f.id === m.folderId);
       html += `<div class="panel meeting-card">`;
-      html += `<div class="meeting-card-head">`;
-      html += `<input type="date" class="meeting-date-input" value="${m.date}" onchange="Meetings.updateFieldAndRender('${m.id}', 'date', this.value)" />`;
-      html += `<input type="text" class="meeting-title-input" placeholder="회의명" spellcheck="false" value="${escapeHtml(m.title)}" oninput="Meetings.updateField('${m.id}', 'title', this.value)" />`;
-      html += `<button class="icon-btn" onclick="Meetings.deleteMeeting('${m.id}')">✕</button>`;
+      html += `<div class="meeting-row-head" onclick="Meetings.toggleExpand('${m.id}')">`;
+      html += `<i class="meeting-chevron">${expanded ? "▾" : "▸"}</i>`;
+      html += `<span class="meeting-row-date">${m.date}</span>`;
+      html += `<span class="meeting-row-title">${escapeHtml(m.title) || "제목 없음"}</span>`;
+      if (folder) html += `<span class="meeting-row-folder">${escapeHtml(folder.name)}</span>`;
+      html += `<button class="icon-btn" onclick="event.stopPropagation(); Meetings.deleteMeeting('${m.id}')">✕</button>`;
       html += `</div>`;
-      html += `<textarea class="meeting-notes" id="meeting-notes-${m.id}" placeholder="논의 내용을 자유롭게 적어두세요" spellcheck="false" oninput="Meetings.updateField('${m.id}', 'notes', this.value); this.style.height='auto'; this.style.height=this.scrollHeight+'px';">${escapeHtml(m.notes)}</textarea>`;
-      html += `<div class="meeting-actions-label">액션아이템</div>`;
-      m.actionItems.forEach((item) => {
-        html += `<div class="todo-row">`;
-        html += `<input type="checkbox" ${item.done ? "checked" : ""} onchange="Meetings.toggleActionItem('${m.id}', '${item.id}')" style="margin-top:2px;flex-shrink:0;cursor:pointer;" />`;
-        html += `<span class="todo-text ${item.done ? "done" : ""}">${escapeHtml(item.text)}</span>`;
-        if (item.sent) {
-          html += `<span style="font-size:11px; color:#B0B8C1; flex-shrink:0;">업무일지로 보냄 ✓</span>`;
-        } else {
-          html += `<button class="icon-btn" style="color:#FC9600; font-weight:700; font-size:11px;" onclick="Meetings.sendToJournal('${m.id}', '${item.id}')">+업무일지로</button>`;
-        }
-        html += `<button class="icon-btn" onclick="Meetings.deleteActionItem('${m.id}', '${item.id}')">✕</button>`;
+
+      if (expanded) {
+        const inputId = `meeting-action-input-${m.id}`;
+        const folderSelectId = `meeting-folder-select-${m.id}`;
+        html += `<div class="meeting-body" onclick="event.stopPropagation()">`;
+        html += `<div class="meeting-card-head">`;
+        html += `<input type="date" class="meeting-date-input" value="${m.date}" onchange="Meetings.updateFieldAndRender('${m.id}', 'date', this.value)" />`;
+        html += `<input type="text" class="meeting-title-input" placeholder="회의명" spellcheck="false" value="${escapeHtml(m.title)}" oninput="Meetings.updateField('${m.id}', 'title', this.value)" />`;
+        html += `<select id="${folderSelectId}" class="meeting-folder-select" onchange="Meetings.updateFieldAndRender('${m.id}', 'folderId', this.value || null)">`;
+        html += `<option value="">폴더 없음</option>`;
+        this.folders.forEach((f) => {
+          html += `<option value="${f.id}" ${m.folderId === f.id ? "selected" : ""}>${escapeHtml(f.name)}</option>`;
+        });
+        html += `</select>`;
         html += `</div>`;
-      });
-      html += `<textarea id="${inputId}" class="boxed" rows="1" placeholder="" spellcheck="false" oninput="this.style.height='auto'; this.style.height=this.scrollHeight+'px';" onkeydown="if(event.key==='Enter' && !event.shiftKey && !event.isComposing && event.keyCode !== 229){event.preventDefault(); Meetings.addActionItem('${m.id}', '${inputId}'); this.value=''; this.style.height='auto';}"></textarea>`;
+
+        html += `<div class="meeting-section-label">안건</div>`;
+        html += `<textarea class="meeting-notes" id="meeting-agenda-${m.id}" placeholder="이번 회의에서 다룰 안건" spellcheck="false" oninput="Meetings.updateField('${m.id}', 'agenda', this.value); this.style.height='auto'; this.style.height=this.scrollHeight+'px';">${escapeHtml(m.agenda)}</textarea>`;
+
+        html += `<div class="meeting-section-label">회의 내용</div>`;
+        html += `<textarea class="meeting-notes" id="meeting-notes-${m.id}" placeholder="논의 내용을 자유롭게 적어두세요" spellcheck="false" oninput="Meetings.updateField('${m.id}', 'notes', this.value); this.style.height='auto'; this.style.height=this.scrollHeight+'px';">${escapeHtml(m.notes)}</textarea>`;
+
+        html += `<div class="meeting-section-label">액션아이템</div>`;
+        m.actionItems.forEach((item) => {
+          html += `<div class="todo-row">`;
+          html += `<input type="checkbox" ${item.done ? "checked" : ""} onchange="Meetings.toggleActionItem('${m.id}', '${item.id}')" style="margin-top:2px;flex-shrink:0;cursor:pointer;" />`;
+          html += `<span class="todo-text ${item.done ? "done" : ""}">${escapeHtml(item.text)}</span>`;
+          if (item.sent) {
+            html += `<span style="font-size: 16px; color:#B0B8C1; flex-shrink:0;">업무일지로 보냄 ✓</span>`;
+          } else {
+            html += `<button class="icon-btn" style="color:#FC9600; font-weight:700; font-size: 16px;" onclick="Meetings.sendToJournal('${m.id}', '${item.id}')">+업무일지로</button>`;
+          }
+          html += `<button class="icon-btn" onclick="Meetings.deleteActionItem('${m.id}', '${item.id}')">✕</button>`;
+          html += `</div>`;
+        });
+        html += `<textarea id="${inputId}" class="boxed" rows="1" placeholder="" spellcheck="false" oninput="this.style.height='auto'; this.style.height=this.scrollHeight+'px';" onkeydown="if(event.key==='Enter' && !event.shiftKey && !event.isComposing && event.keyCode !== 229){event.preventDefault(); Meetings.addActionItem('${m.id}', '${inputId}'); this.value=''; this.style.height='auto';}"></textarea>`;
+        html += `</div>`;
+      }
       html += `</div>`;
     });
     list.innerHTML = html;
     records.forEach((m) => {
+      if (!this.expandedIds[m.id]) return;
+      const agendaEl = document.getElementById(`meeting-agenda-${m.id}`);
+      if (agendaEl) { agendaEl.style.height = "auto"; agendaEl.style.height = agendaEl.scrollHeight + "px"; }
       const notesEl = document.getElementById(`meeting-notes-${m.id}`);
       if (notesEl) { notesEl.style.height = "auto"; notesEl.style.height = notesEl.scrollHeight + "px"; }
     });
